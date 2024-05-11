@@ -19,8 +19,8 @@ const Login = () => {
         console.log(password);
 
         const res = await axios.post(process.env.REACT_APP_SERVER_URL + '/member/login', {
-            username,
-            password
+            id: username,
+            password: password
         });
 
         console.log("success", res.data);
