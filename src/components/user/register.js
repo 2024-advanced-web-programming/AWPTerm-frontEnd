@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { TextField, Button, Typography, Container, MenuItem, FormControl, InputLabel, Select } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     id: '',
     password: '',
@@ -28,8 +31,9 @@ const Register = () => {
     event.preventDefault();
     
     try {
-      const res = await axios.post(process.env.REACT_APP_SERVER_URL + 'register', formData);
+      const res = await axios.post(process.env.REACT_APP_SERVER_URL + '/member/register', formData);
       console.log('회원가입 성공:', res.data);
+      navigate("/");
       // 여기에서 회원가입이 성공했을 때 할 작업 추가
     } catch (error) {
       console.error('회원가입 실패:', error);
