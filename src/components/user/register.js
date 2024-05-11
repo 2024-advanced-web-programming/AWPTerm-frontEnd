@@ -1,56 +1,97 @@
-import React, { useState } from 'react';
-import axios from 'axios';
-import { TextField, Button, Typography, Container, MenuItem, FormControl, InputLabel, Select } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import {
+  TextField,
+  Button,
+  Typography,
+  Container,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Select,
+} from "@mui/material";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Register = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const code = queryParams.get("code");
+  const accessToken = queryParams.get("accessToken");
 
   const [formData, setFormData] = useState({
-    id: '',
-    password: '',
-    name: '',
-    birthDate: '',
-    gender: '',
-    major: '',
-    code: '',
-    phoneNumber: '',
-    email: '',
-    position: ''
+    id: "",
+    password: "",
+    name: "",
+    birthDate: "",
+    gender: "",
+    major: "",
+    code: "",
+    phoneNumber: "",
+    email: "",
+    position: "",
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value
+      [name]: value,
     });
   };
 
+  useEffect(() => {
+    if(code && accessToken) {
+      const updatedFormData = { ...formData, id: code, password: accessToken };
+      for (const key in updatedFormData) {
+        if(key !== 'id' && key !== 'password') {
+          updatedFormData[key] = formData[key];
+        }
+      }
+      setFormData(updatedFormData);
+    }
+
+    console.log(formData);
+  }, [code, accessToken]);
+
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
+
     try {
-      const res = await axios.post(process.env.REACT_APP_SERVER_URL + '/member/register', formData);
-      console.log('회원가입 성공:', res.data);
+      const res = await axios.post(
+        process.env.REACT_APP_SERVER_URL + "/member/register",
+        formData
+      );
+      console.log("회원가입 성공:", res.data);
       navigate("/");
       // 여기에서 회원가입이 성공했을 때 할 작업 추가
     } catch (error) {
-      console.error('회원가입 실패:', error);
+      console.error("회원가입 실패:", error);
       // 여기에서 회원가입이 실패했을 때 할 작업 추가
     }
   };
 
   return (
     <Container maxWidth="xs">
-      <Typography variant="h4" align="center">회원가입</Typography>
-      <form style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }} onSubmit={handleSubmit}>
+      <Typography variant="h4" align="center">
+        회원가입
+      </Typography>
+      <form
+        style={{
+          marginTop: "1rem",
+          display: "flex",
+          flexDirection: "column",
+          gap: "1rem",
+        }}
+        onSubmit={handleSubmit}
+      >
         <TextField
           label="아이디"
           name="id"
           variant="outlined"
           value={formData.id}
           onChange={handleChange}
+          disabled={!!code}
           required
         />
         <TextField
@@ -60,6 +101,7 @@ const Register = () => {
           variant="outlined"
           value={formData.password}
           onChange={handleChange}
+          disabled={!!accessToken}
           required
         />
         <TextField
@@ -102,7 +144,9 @@ const Register = () => {
             onChange={handleChange}
             required
           >
-            <MenuItem value="컴퓨터소프트웨어공학과">컴퓨터소프트웨어공학과</MenuItem>
+            <MenuItem value="컴퓨터소프트웨어공학과">
+              컴퓨터소프트웨어공학과
+            </MenuItem>
             <MenuItem value="컴퓨터공학과">컴퓨터공학과</MenuItem>
             <MenuItem value="인공지능공학과">능동지능공학과</MenuItem>
           </Select>
@@ -145,7 +189,9 @@ const Register = () => {
             <MenuItem value="학생">학생</MenuItem>
           </Select>
         </FormControl>
-        <Button variant="contained" color="primary" type="submit">회원가입</Button>
+        <Button variant="contained" color="primary" type="submit">
+          회원가입
+        </Button>
       </form>
     </Container>
   );

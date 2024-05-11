@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Container } from '@mui/material';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
+  const navigate = useNavigate();
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -24,6 +27,7 @@ const Login = () => {
         });
 
         console.log("success", res.data);
+        navigate("/");
     } catch (error) {
         console.log("fail", error);
     }
