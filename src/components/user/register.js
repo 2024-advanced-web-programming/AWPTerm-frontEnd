@@ -16,8 +16,10 @@ const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const code = queryParams.get("code");
-  const accessToken = queryParams.get("accessToken");
+  const id = queryParams.get("id");
+  const email = queryParams.get("email");
+
+  console.log(id, email);
 
   const [formData, setFormData] = useState({
     id: "",
@@ -41,10 +43,11 @@ const Register = () => {
   };
 
   useEffect(() => {
-    if(code && accessToken) {
-      const updatedFormData = { ...formData, id: code, password: accessToken };
+    console.log('ttt' + id + ' ' + email);
+    if(id && email) {
+      const updatedFormData = { ...formData, id: 'kakao' + id, email: email };
       for (const key in updatedFormData) {
-        if(key !== 'id' && key !== 'password') {
+        if(key !== 'id' && key !== 'email') {
           updatedFormData[key] = formData[key];
         }
       }
@@ -52,10 +55,12 @@ const Register = () => {
     }
 
     console.log(formData);
-  }, [code, accessToken]);
+  }, [id, email]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    console.log(formData);
 
     try {
       const res = await axios.post(
@@ -91,17 +96,17 @@ const Register = () => {
           variant="outlined"
           value={formData.id}
           onChange={handleChange}
-          disabled={!!code}
+          disabled={!!id}
           required
         />
         <TextField
-          label="비밀번호"
+          label={!!id ? "카카오 로그인은 비밀번호 미입력" : "비밀번호"}
           type="password"
           name="password"
           variant="outlined"
           value={formData.password}
           onChange={handleChange}
-          disabled={!!accessToken}
+          disabled={!!id}
           required
         />
         <TextField
@@ -174,6 +179,7 @@ const Register = () => {
           variant="outlined"
           value={formData.email}
           onChange={handleChange}
+          disabled={!!email}
           required
         />
         <FormControl variant="outlined">

@@ -27,7 +27,11 @@ const Login = () => {
         });
 
         console.log("success", res.data);
-        navigate("/");
+        
+        if(res.status === 200) {
+          navigate("/");
+        }
+
     } catch (error) {
         console.log("fail", error);
     }

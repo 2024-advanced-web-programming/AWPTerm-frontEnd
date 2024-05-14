@@ -37,24 +37,28 @@ const KakaoLoginHandeler = (props) => {
     };
 
     const kakaoLogin = async () => {
-      const accessToken = (await sendTokenToBack()).data.data;
+      const returnData = (await sendTokenToBack()).data;
       // const accessToken = await getAccessToken();
-      console.log("acc", accessToken);
+      console.log("acc", returnData);
 
       try {
         const res = await axios.post(
           process.env.REACT_APP_SERVER_URL + "/member/kakao/login",
           {
-            id: code,
-            password: accessToken,
+            id: 'kakao' + returnData.id,
+            password: '',
           }
         );
 
-        console.log("success", res.data);
+        console.log("success", res);
 
-        if(res.data.code === "UNPROCESSABLE_ENTITY") {
-          navigate("/register?code=" + code + "&accessToken=" + accessToken);
+        if(res.status === 200) {
+          navigate("/");
         }
+
+        // if(res.data.code === "UNPROCESSABLE_ENTITY") {
+        //   navigate("/register?code=" + code + "&accessToken=" + accessToken);
+        // }
 
       } catch (error) {
         console.log("error2");
@@ -62,7 +66,7 @@ const KakaoLoginHandeler = (props) => {
 
         if (error.response.status === 422) {
           console.error("회원가입 필요");
-          navigate("/register?code=" + code + "&accessToken" + accessToken);
+          navigate("/register?id=" + returnData.id + "&email=" + returnData.email);
         }
       }
     };
