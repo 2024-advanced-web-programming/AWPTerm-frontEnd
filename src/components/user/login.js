@@ -76,6 +76,7 @@ const Login = () => {
         />
         <Button variant="contained" color="primary" type="submit">로그인</Button>
         <Button variant="contained" color="primary" onClick={handleKakaoLogin}>카카오 로그인</Button>
+        <Button variant="contained" color="primary" onClick={() => {navigate('/register')}}>회원가입</Button>
       </form>
     </Container>
   );

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { TextField, Button, Container, Typography, FormControl, InputLabel, Select, MenuItem, Autocomplete } from '@mui/material';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const RegistClub = () => {
   const dummyAdvisorList = [
@@ -49,6 +50,7 @@ const RegistClub = () => {
   const [advisorList, setAdvisorList] = useState(dummyAdvisorList);
   const [selectedAdvisor, setSelectedAdvisor] = useState(null);
 
+  const navigate = useNavigate();
 
   const handleSubmit = () => {
     // 여기에 동아리 등록 정보를 처리하는 코드를 추가할 수 있습니다.
@@ -76,9 +78,13 @@ const RegistClub = () => {
         supervisorName: selectedAdvisor.name,
         supervisorMajor: selectedAdvisor.major,
         supervisorPhoneNumber: selectedAdvisor.phoneNumber
-      });
+      }, {withCredentials: true});
 
       console.log(res);
+
+      if(res.status === 200) {
+        navigate('/');
+      }
 
     } catch (error) {
       console.error(error);
