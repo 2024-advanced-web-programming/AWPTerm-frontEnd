@@ -52,7 +52,7 @@ const RegistClub = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // 여기에 동아리 등록 정보를 처리하는 코드를 추가할 수 있습니다.
     console.log('동아리 등록 정보:', {
       clubType,
@@ -67,7 +67,7 @@ const RegistClub = () => {
     });
 
     try {
-      const res = axios.post(process.env.REACT_APP_SERVER_URL + '/club/register', {
+      const res = await axios.post(process.env.REACT_APP_SERVER_URL + '/club/register', {
         clubType: clubType,
         name: clubName,
         requestorCode: applicantID,

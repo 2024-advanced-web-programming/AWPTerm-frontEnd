@@ -3,11 +3,13 @@ import { Typography, Table, TableBody, TableCell, TableContainer, TableHead, Tab
 
 function RegistClubApprove() {
   // 더미 데이터 (임의로 생성)
-  const [applications, setApplications] = useState([
+  const dummys = [
     { id: 1, clubType: '중앙', clubName: '예술 동아리', applicantName: '홍길동', applicantAffiliation: '예술학과', applicantID: '20230001', applicantContact: '010-1234-5678', advisorName: '김교수', advisorMajor: '미술', advisorContact: '010-9876-5432', status: '검토', rejectionReason: '' },
     { id: 2, clubType: '학과', clubName: '과학 동아리', applicantName: '이순신', applicantAffiliation: '물리학과', applicantID: '20230002', applicantContact: '010-1111-2222', advisorName: '박교수', advisorMajor: '물리학', advisorContact: '010-3333-4444', status: '검토', rejectionReason: '' },
     { id: 3, clubType: '중앙', clubName: '음악 동아리', applicantName: '심청', applicantAffiliation: '음악학과', applicantID: '20230003', applicantContact: '010-5555-6666', advisorName: '최교수', advisorMajor: '음악', advisorContact: '010-7777-8888', status: '검토', rejectionReason: '' },
-  ]);
+  ];
+
+  const [applications, setApplications] = useState(dummys);
   const [selectedApplication, setSelectedApplication] = useState(null);
   const [rejectionReason, setRejectionReason] = useState('');
   const [openModal, setOpenModal] = useState(false);

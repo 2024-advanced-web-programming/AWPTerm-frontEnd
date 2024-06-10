@@ -9,6 +9,7 @@ import KakaoLoginHandeler from './components/handler/kakaoLoginHandler';
 import RegistClub from './components/club/RegistClub';
 import RegistClubStatus from './components/club/RegistClubStatus';
 import RegistClubApprove from './components/management/RegistClubApprove';
+import AdminLogin from './components/management/adminLogin';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Top />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/register" element={<Register />} />
           <Route path="/member/kakao/callback" element={<KakaoLoginHandeler />} />
           <Route path="/registClub" element={<RegistClub />} />
