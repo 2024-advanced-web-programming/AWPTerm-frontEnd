@@ -38,7 +38,7 @@ const RegistClubStatus = () => {
     }
 
     fetchClubStatusList();
-  })
+  }, [])
 
   return (
     <TableContainer component={Paper}>
