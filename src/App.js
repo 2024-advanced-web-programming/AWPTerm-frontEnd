@@ -28,6 +28,7 @@ import AdminMain from './components/main/adminMain';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
 
   const checkCookie = (cookieName) => {
@@ -41,6 +42,7 @@ function App() {
   };
 
   const checkLoginStatus = async () => {
+    console.log('check');
     try {
       const res = await axios.get(process.env.REACT_APP_SERVER_URL + '/member/me');
       if (res.status === 200) {
@@ -53,7 +55,7 @@ function App() {
   };
 
   useEffect(() => {
-    if (checkCookie('JSESSIONID')) {
+    if (checkCookie('JSESSIONID') && !isAdminLoggedIn) {
       checkLoginStatus();
     }
   }, []);
@@ -64,6 +66,7 @@ function App() {
       if (res.status === 200) {
         document.cookie = 'JSESSIONID=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
         setIsLoggedIn(false);
+        setIsAdminLoggedIn(false);
         setUserName('');
         window.location.reload(); // 페이지 새로고침
       }
@@ -74,7 +77,12 @@ function App() {
 
   const handleLogin = (userName) => {
     setIsLoggedIn(true);
-    setUserName(userName);
+    if(userName === "adminLoggedIn") {
+      setUserName("admin");
+      setIsAdminLoggedIn(true);
+    } else {
+      setUserName(userName);
+    }
   };
 
   return (
