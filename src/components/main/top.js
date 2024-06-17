@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Container, Typography, Grid, Card, CardContent, CardMedia, Button, Select, MenuItem } from "@mui/material";
+import { Container, Typography, Grid, Card, CardContent, CardMedia, Button, Select, MenuItem, TableContainer, Paper, Table, TableCell, TableRow, TableBody } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 const Top = () => {
@@ -10,14 +10,20 @@ const Top = () => {
   ]);
   const [selectedClub, setSelectedClub] = useState({ id: -1, name: "전체 조회" });
   const [events, setEvents] = useState([
-    { id: 1, title: "동아리 행사 안내 1" },
-    { id: 2, title: "동아리 행사 안내 2" },
-    { id: 3, title: "동아리 행사 안내 3" }
+    { id: 1, title: "동아리 행사 안내 1", author: "Author 5", date: "2023-06-13", views: 300, type: "club" },
+    { id: 2, title: "동아리 행사 안내 2", author: "Author 5", date: "2023-06-13", views: 300, type: "club" },
+    { id: 3, title: "동아리 행사 안내 3", author: "Author 5", date: "2023-06-13", views: 300, type: "club" },
+    { id: 1, title: "동아리 행사 안내 1", author: "Author 5", date: "2023-06-13", views: 300, type: "club" },
+    { id: 2, title: "동아리 행사 안내 2", author: "Author 5", date: "2023-06-13", views: 300, type: "club" },
+    { id: 3, title: "동아리 행사 안내 3", author: "Author 5", date: "2023-06-13", views: 300, type: "club" }
   ]);
   const [recruitmentPosts, setRecruitmentPosts] = useState([
-    { id: 1, title: "부원 모집 게시글 1" },
-    { id: 2, title: "부원 모집 게시글 2" },
-    { id: 3, title: "부원 모집 게시글 3" }
+    { id: 1, title: "부원 모집 게시글 1", author: "Author 1", date: "2023-06-17", views: 100, type: "recruit" },
+    { id: 2, title: "부원 모집 게시글 2", author: "Author 1", date: "2023-06-17", views: 100, type: "recruit" },
+    { id: 3, title: "부원 모집 게시글 3", author: "Author 1", date: "2023-06-17", views: 100, type: "recruit" },
+    { id: 1, title: "부원 모집 게시글 1", author: "Author 1", date: "2023-06-17", views: 100, type: "recruit" },
+    { id: 2, title: "부원 모집 게시글 2", author: "Author 1", date: "2023-06-17", views: 100, type: "recruit" },
+    { id: 3, title: "부원 모집 게시글 3", author: "Author 1", date: "2023-06-17", views: 100, type: "recruit" }
   ]);
   const [photos, setPhotos] = useState([
     { id: 1, title: "활동 사진 1", thumbnailUrl: "https://via.placeholder.com/150" },
@@ -82,6 +88,10 @@ const Top = () => {
     console.log(selectedClub);
   };
 
+  const handlePostClick = (postId) => {
+    navigate(`/post/${postId}`);
+  };
+
   return (
     <Container maxWidth="lg" style={{ marginTop: "2rem" }}>
       {/* <Select
@@ -106,10 +116,21 @@ const Top = () => {
                 <Typography variant="h5" gutterBottom>동아리 행사 공지</Typography>
                 <Button variant="outlined" onClick={() => {navigate("/club/events")}}>더 보기</Button>
               </div>
-              {/* 공지 목록 렌더링 */}
-              {events.slice(0, 5).map((event) => (
-                <Typography key={event.id} gutterBottom>{event.title}</Typography>
-              ))}
+              <TableContainer component={Paper}>
+                <Table>
+                <TableBody>
+            {events.slice(0, 5).map((post) => (
+              <TableRow key={post.id} onClick={() => handlePostClick(post.id)} style={{ cursor: "pointer" }}>
+                <TableCell>{post.id}</TableCell>
+                <TableCell>[{post.type}] {post.title}</TableCell>
+                <TableCell>{post.author}</TableCell>
+                <TableCell>{post.date}</TableCell>
+                <TableCell>{post.views}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+                </Table>
+              </TableContainer>
             </CardContent>
           </Card>
         </Grid>
@@ -120,9 +141,21 @@ const Top = () => {
                 <Typography variant="h5" gutterBottom>부원 모집 게시판</Typography>
                 <Button variant="outlined" onClick={() => {navigate("/club/recruit")}}>더 보기</Button>
               </div>
-              {recruitmentPosts.slice(0, 5).map((post) => (
-              <Typography key={post.id} gutterBottom>{post.title}</Typography>
-          ))}
+              <TableContainer component={Paper}>
+                <Table>
+                <TableBody>
+            {recruitmentPosts.slice(0, 5).map((post) => (
+              <TableRow key={post.id} onClick={() => handlePostClick(post.id)} style={{ cursor: "pointer" }}>
+                <TableCell>{post.id}</TableCell>
+                <TableCell>[{post.type}] {post.title}</TableCell>
+                <TableCell>{post.author}</TableCell>
+                <TableCell>{post.date}</TableCell>
+                <TableCell>{post.views}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+                </Table>
+              </TableContainer>
             </CardContent>
           </Card>
         </Grid>
@@ -139,7 +172,7 @@ const Top = () => {
           <Grid container spacing={2}>
             {photos.slice(0, 3).map((photo) => (
               <Grid item key={photo.id} xs={12} sm={6} md={4}>
-                <Card>
+                <Card onClick={() => handlePostClick(photo.id)} style={{ cursor: "pointer" }}>
                   <CardMedia
                     component="img"
                     height="140"
@@ -168,7 +201,7 @@ const Top = () => {
           <Grid container spacing={2}>
             {videos.slice(0, 3).map((video) => (
               <Grid item key={video.id} xs={12} sm={6} md={4}>
-                <Card>
+                <Card onClick={() => handlePostClick(video.id)} style={{ cursor: "pointer" }}>
                   <CardMedia
                     component="img"
                     height="140"

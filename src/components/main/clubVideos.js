@@ -49,7 +49,7 @@ const ClubVideos = () => {
   return (
     <Container sx={{marginTop: "30px"}}>
       <Typography variant="h4" gutterBottom>
-        Club Videos
+        활동 영상
       </Typography>
       <Card style={{ marginTop: "2rem" }}>
         <CardContent>
