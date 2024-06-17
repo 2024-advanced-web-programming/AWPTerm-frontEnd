@@ -103,10 +103,10 @@ function App() {
 
             <Route path="/club/application/:id" element={<ApplicationClub />} />
             <Route path="/club/application/status" element={<ApplicationStatus />} />
-            <Route path="/club/application/master/:id" element={<ClubApplicationManagement />} />
+            {/* <Route path="/club/application/master" element={<ClubApplicationManagement />} /> */}
 
             <Route path="/club/config/:id" element={<ClubManagement />} />
-            <Route path="/club/:id" element={<ClubPage />} />
+            {/* <Route path="/club/:id" element={<ClubPage />} /> */}
 
             <Route path="/editor" element={<Editor />} />
 
