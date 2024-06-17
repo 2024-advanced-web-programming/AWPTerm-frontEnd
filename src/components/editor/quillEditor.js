@@ -1,12 +1,13 @@
 import React, { useMemo, useState, useRef, useCallback } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html';
 
 // 툴바 버튼 및 포맷 정의
 const formats = [
   'font', 'header', 'bold', 'italic', 'underline', 'strike',
   'blockquote', 'list', 'bullet', 'indent', 'link', 'align',
-  'color', 'background', 'size', 'h1'
+  'color', 'background', 'size', 'image'
 ];
 
 // 툴바 컴포넌트 정의
@@ -49,24 +50,23 @@ export const CustomToolbar = () => (
   </div>
 );
 
-const QuillEditor = () => {
+const QuillEditor = ({ onContentChange }) => {
   const [value, setValue] = useState("");
   const quillRef = useRef(null);
 
   // 파일 업로드를 위한 커스텀 훅 (예시로 구현)
-  const uploadFileMutation = {
+  const uploadFileMutation = useMemo(() => ({
     mutateAsync: async (file) => {
-      // 서버로 파일 업로드 구현
-      // 예시로 파일의 URL을 반환
+      // 실제 서버 요청 로직은 여기에 구현
       return new Promise((resolve) => {
         setTimeout(() => {
-          resolve({ displayUrl: URL.createObjectURL(file) });
+          resolve({ displayUrl: 'https://rohit-chouhan.gallerycdn.vsassets.io/extensions/rohit-chouhan/sweetalert2-snippet/1.1.2/1625627316335/Microsoft.VisualStudio.Services.Icons.Default' });
         }, 1000);
       });
     },
-  };
+  }), []);
 
-  const handleImageUpload = async (file) => {
+  const handleImageUpload = useCallback(async (file) => {
     if (!file) {
       alert('파일이 선택되지 않았습니다.');
       return;
@@ -88,7 +88,7 @@ const QuillEditor = () => {
         console.error('Error:', error);
       }
     }
-  };
+  }, [uploadFileMutation]);
 
   const handleMultipleImagesUpload = useCallback(
     async (files) => {
@@ -101,7 +101,7 @@ const QuillEditor = () => {
     [handleImageUpload]
   );
 
-  const multiImageHandler = () => {
+  const multiImageHandler = useCallback(() => {
     const input = document.createElement('input');
     input.setAttribute('type', 'file');
     input.setAttribute('accept', 'image/*');
@@ -114,11 +114,33 @@ const QuillEditor = () => {
     });
 
     input.click();
-  };
+  }, [handleMultipleImagesUpload]);
+
+  const handleShowHtmlContent = useCallback(() => {
+    if (quillRef.current) {
+      const delta = quillRef.current.getEditor().getContents();
+      const html = quillToHtml(delta);
+      console.log(html);
+      onContentChange(html); // HTML 내용을 부모 컴포넌트로 전달
+    }
+  }, [onContentChange]);
+
+  const quillToHtml = useCallback((delta) => {
+    const converter = new QuillDeltaToHtmlConverter(delta.ops, {});
+    return converter.convert();
+  }, []);
+
+  const handleGetContent = useCallback(() => {
+    if (quillRef.current) {
+      const delta = quillRef.current.getEditor().getContents();
+      const html = quillToHtml(delta);
+      setValue(html); // 에디터 내용을 상태로 설정
+    }
+  }, [quillToHtml]);
 
   const modules = useMemo(() => ({
     toolbar: {
-      container: "#toolbar", // 툴바 컨테이너 설정
+      container: "#toolbar",
       handlers: {
         image: multiImageHandler,
       },
@@ -127,7 +149,7 @@ const QuillEditor = () => {
 
   return (
     <div>
-      <CustomToolbar /> {/* CustomToolbar 컴포넌트 삽입 */}
+      <CustomToolbar />
       <ReactQuill
         ref={quillRef}
         theme="snow"
@@ -139,6 +161,6 @@ const QuillEditor = () => {
       />
     </div>
   );
-}
+};
 
 export default QuillEditor;

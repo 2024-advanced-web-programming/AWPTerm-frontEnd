@@ -28,7 +28,19 @@ const ClubMembers = ({ id }) => {
       { id: 6, name: "김철수", role: "회원", status: "승인" },
     ];
 
+    const fetchClubData = async () => {
+      try {
+        const res = await axios.get(`${process.env.REACT_APP_SERVER_URL}/club/${id}`);
+        console.log(res)
+
+        setMembers(res.data.members);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
     setMembers(initialMembers);
+    // fetchClubData();
   }, []);
 
   const handleSelectMember = (event, memberId) => {
@@ -41,8 +53,9 @@ const ClubMembers = ({ id }) => {
 
   const handleBulkRemove = async () => {
     try {
-      // Simulating API call to remove members
-      // In real implementation, replace with actual API call
+      const res = axios.delete(process.env.REACT_APP_SERVER_URL + `/club/${id}/deletemembers/${selectedMembers.id}`)
+
+      // 탈퇴 처리 하는 통신 코드
       console.log("Removing members:", selectedMembers);
       setMembers(members.filter((member) => !selectedMembers.includes(member.id)));
       setSelectedMembers([]);
@@ -73,7 +86,7 @@ const ClubMembers = ({ id }) => {
               </TableCell>
               <TableCell>이름</TableCell>
               <TableCell>역할</TableCell>
-              <TableCell>상태</TableCell>
+              {/* <TableCell>상태</TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -87,7 +100,7 @@ const ClubMembers = ({ id }) => {
                 </TableCell>
                 <TableCell>{member.name}</TableCell>
                 <TableCell>{member.role}</TableCell>
-                <TableCell>{member.status}</TableCell>
+                {/* <TableCell>{member.status}</TableCell> */}
               </TableRow>
             ))}
           </TableBody>

@@ -35,8 +35,8 @@ const ClubBasicInfo = ({ id }) => {
         const res = await axios.get(`${process.env.REACT_APP_SERVER_URL}/club/${id}`);
         console.log(res)
         setClubName(res.data.name);
-        setIntroduction(res.data.introduction);
-        setRegularMeetingTime(res.data.regularMeetingTime);
+        setIntroduction(res.data.introduction ? res.data.introduction : "");
+        setRegularMeetingTime(res.data.regularMeetingTime ? res.data.regularMeetingTime : "");
         setMembers(res.data.members); // 멤버 목록 설정
         // 회장, 부회장, 총무 기본 값 설정
         const presidentMember = members.find((member) => member.role === "회장");
