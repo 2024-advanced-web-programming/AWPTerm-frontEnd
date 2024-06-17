@@ -1,7 +1,8 @@
-import React, { useMemo, useState, useRef, useCallback } from 'react';
+import React, { useMemo, useState, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html';
+import axios from 'axios';
 
 // 툴바 버튼 및 포맷 정의
 const formats = [
@@ -50,7 +51,7 @@ export const CustomToolbar = () => (
   </div>
 );
 
-const QuillEditor = ({ onContentChange }) => {
+const QuillEditor = forwardRef ((props, ref) => {
   const [value, setValue] = useState("");
   const quillRef = useRef(null);
 
@@ -58,11 +59,23 @@ const QuillEditor = ({ onContentChange }) => {
   const uploadFileMutation = useMemo(() => ({
     mutateAsync: async (file) => {
       // 실제 서버 요청 로직은 여기에 구현
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({ displayUrl: 'https://rohit-chouhan.gallerycdn.vsassets.io/extensions/rohit-chouhan/sweetalert2-snippet/1.1.2/1625627316335/Microsoft.VisualStudio.Services.Icons.Default' });
-        }, 1000);
-      });
+      try {
+        const res = await axios.post(process.env.REACT_APP_SERVER_URL + "/board/uploadfile", file);
+        console.log(res);
+
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({ displayUrl: res.data });
+          }, 1000);
+        });
+      } catch (error) {
+        console.error(error);
+        return new Promise((resolve) => {
+          setTimeout(() => {
+            resolve({ displayUrl: 'https://rohit-chouhan.gallerycdn.vsassets.io/extensions/rohit-chouhan/sweetalert2-snippet/1.1.2/1625627316335/Microsoft.VisualStudio.Services.Icons.Default' });
+          }, 1000);
+        });
+      }
     },
   }), []);
 
@@ -116,14 +129,14 @@ const QuillEditor = ({ onContentChange }) => {
     input.click();
   }, [handleMultipleImagesUpload]);
 
-  const handleShowHtmlContent = useCallback(() => {
-    if (quillRef.current) {
-      const delta = quillRef.current.getEditor().getContents();
-      const html = quillToHtml(delta);
-      console.log(html);
-      onContentChange(html); // HTML 내용을 부모 컴포넌트로 전달
-    }
-  }, [onContentChange]);
+  // const handleShowHtmlContent = useCallback(() => {
+  //   if (quillRef.current) {
+  //     const delta = quillRef.current.getEditor().getContents();
+  //     const html = quillToHtml(delta);
+  //     console.log(html);
+  //     onContentChange(html); // HTML 내용을 부모 컴포넌트로 전달
+  //   }
+  // }, [onContentChange]);
 
   const quillToHtml = useCallback((delta) => {
     const converter = new QuillDeltaToHtmlConverter(delta.ops, {});
@@ -137,6 +150,21 @@ const QuillEditor = ({ onContentChange }) => {
       setValue(html); // 에디터 내용을 상태로 설정
     }
   }, [quillToHtml]);
+
+  function sendContentsToParent() {
+    if(quillRef.current) {
+      const delta = quillRef.current.getEditor().getContents();
+      const html = quillToHtml(delta);
+
+      console.log(html);
+
+      return html;
+    }
+  };
+
+  useImperativeHandle(ref, () => ({
+    sendContentsToParent
+  }));
 
   const modules = useMemo(() => ({
     toolbar: {
@@ -161,6 +189,6 @@ const QuillEditor = ({ onContentChange }) => {
       />
     </div>
   );
-};
+});
 
 export default QuillEditor;

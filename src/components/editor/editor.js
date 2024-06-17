@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { TextField, Button, Box, Select, MenuItem, FormControl, InputLabel, Grid } from "@mui/material";
 import QuillEditor from "./quillEditor";
@@ -11,6 +11,7 @@ const Editor = () => {
   const [attachment, setAttachment] = useState(null);
   const [url, setUrl] = useState("");
   const [content, setContent] = useState("");
+  const conRef = useRef({});
 
   const handleTitleChange = (event) => {
     setTitle(event.target.value);
@@ -33,31 +34,52 @@ const Editor = () => {
   };
 
   const handleSubmit = async () => {
+    const contents = await conRef.current.sendContentsToParent();
+    // setContent(contents);
     console.log(content);
     console.log(title);
     console.log(category);
 
     // 데이터 유효성 검사
-    if (!title || !category || !content) {
+    if (!title || !category || !contents) {
       alert("제목, 카테고리, 내용은 필수 입력 사항입니다.");
       return;
     }
 
-    // 서버에 보낼 데이터 준비
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("category", category);
-    formData.append("content", content);
-
-    if (category === "활동 영상") {
-      formData.append("url", url);
-    } else {
-      formData.append("attachment", attachment);
+    // 서버에 보낼 데이터
+    let data;
+    if(category === "활동 영상") {
+      data = {
+        id: id,
+        title: title,
+        category: category,
+        url: url
+      };
+    }
+    else {
+      data = {
+        id: id,
+        title: title,
+        category: category,
+        content: contents
+      };
     }
 
+    // formData.append("title", title);
+    // formData.append("category", category);
+    // formData.append("content", content);
+
+    // if (category === "활동 영상") {
+    //   formData.append("url", url);
+    // } else {
+    //   formData.append("attachment", attachment);
+    // }
+
+    console.log(data);
+    
     try {
       // 서버 POST 요청
-      const response = await axios.post("https://your-server-endpoint.com/post", formData);
+      const response = await axios.post("https://your-server-endpoint.com/post", data);
 
       if (response.status === 200) {
         alert("게시글이 성공적으로 등록되었습니다.");
@@ -114,7 +136,7 @@ const Editor = () => {
         />
       ) : (
         <>
-          <QuillEditor onContentChange={handleContentChange} />
+          <QuillEditor ref={conRef} />
         </>
       )}
       <Box mt={2}>
