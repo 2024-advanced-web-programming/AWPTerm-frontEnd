@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Modal, TextField, FormControl, InputLabel, Select, MenuItem } from '@mui/material';
+import axios from "axios";
 
 function RegistClubApprove() {
   // 더미 데이터 (임의로 생성)
   const dummys = [
-    { id: 1, clubType: '중앙', clubName: '예술 동아리', applicantName: '홍길동', applicantAffiliation: '예술학과', applicantID: '20230001', applicantContact: '010-1234-5678', advisorName: '김교수', advisorMajor: '미술', advisorContact: '010-9876-5432', status: '검토', rejectionReason: '' },
-    { id: 2, clubType: '학과', clubName: '과학 동아리', applicantName: '이순신', applicantAffiliation: '물리학과', applicantID: '20230002', applicantContact: '010-1111-2222', advisorName: '박교수', advisorMajor: '물리학', advisorContact: '010-3333-4444', status: '검토', rejectionReason: '' },
-    { id: 3, clubType: '중앙', clubName: '음악 동아리', applicantName: '심청', applicantAffiliation: '음악학과', applicantID: '20230003', applicantContact: '010-5555-6666', advisorName: '최교수', advisorMajor: '음악', advisorContact: '010-7777-8888', status: '검토', rejectionReason: '' },
+    { id: 1, clubType: '중앙', clubName: '예술 동아리', applicantName: '홍길동', applicantMajor: '예술학과', applicantCode: '20230001', applicantPhoneNumber: '010-1234-5678', supervisorName: '김교수', supervisorMajor: '미술', supervisorPhoneNumber: '010-9876-5432', status: '검토'},
+    { id: 2, clubType: '학과', clubName: '과학 동아리', applicantName: '이순신', applicantMajor: '물리학과', applicantCode: '20230002', applicantPhoneNumber: '010-1111-2222', supervisorName: '박교수', supervisorMajor: '물리학', supervisorPhoneNumber: '010-3333-4444', status: '검토'},
+    { id: 3, clubType: '중앙', clubName: '음악 동아리', applicantName: '심청', applicantMajor: '음악학과', applicantCode: '20230003', applicantPhoneNumber: '010-5555-6666', supervisorName: '최교수', supervisorMajor: '음악', supervisorPhoneNumber: '010-7777-8888', status: '검토'},
   ];
 
   const [applications, setApplications] = useState(dummys);
@@ -14,12 +15,42 @@ function RegistClubApprove() {
   const [rejectionReason, setRejectionReason] = useState('');
   const [openModal, setOpenModal] = useState(false);
 
+  useEffect(() => {
+    const fetchClubs = async () => {
+      try {
+        const res = await axios.get(process.env.REACT_APP_SERVER_URL + "/club/register/list");
+        console.log(res);
+        setApplications(res.data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchClubs();
+  }, [])
+
+  const updateStatus = async (application, status, rejectedReason) => {
+    try {
+      console.log(application.id)
+      const res = await axios.put(process.env.REACT_APP_SERVER_URL + "/club/updateStatus", {
+        clubId: application.id,
+        status: status,
+        rejectedReason: rejectedReason
+      });
+      console.log(res);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   // 신청 목록에서 항목을 선택하여 승인/거절을 진행할 때 실행되는 함수
   const handleAction = (application, action) => {
     if (action === 'approve') {
       // 승인 처리
       const updatedApplications = applications.map(app => {
         if (app.id === application.id) {
+          updateStatus(application, "승인", '')
+          //TODO 아래의 status 변경이 통신에 성공했을 때만 적용되도록 수정
           return { ...app, status: '승인' };
         } else {
           return app;
@@ -37,6 +68,8 @@ function RegistClubApprove() {
   const handleReject = () => {
     const updatedApplications = applications.map(app => {
       if (app.id === selectedApplication.id) {
+        updateStatus(selectedApplication, "거절", rejectionReason)
+        //TODO 아래의 status 변경이 통신에 성공했을 때만 적용되도록 수정
         return { ...app, status: '거절', rejectionReason };
       } else {
         return app;
@@ -72,12 +105,12 @@ function RegistClubApprove() {
                 <TableCell>{app.clubType}</TableCell>
                 <TableCell>{app.clubName}</TableCell>
                 <TableCell>{app.applicantName}</TableCell>
-                <TableCell>{app.applicantAffiliation}</TableCell>
-                <TableCell>{app.applicantID}</TableCell>
-                <TableCell>{app.applicantContact}</TableCell>
-                <TableCell>{app.advisorName}</TableCell>
-                <TableCell>{app.advisorMajor}</TableCell>
-                <TableCell>{app.advisorContact}</TableCell>
+                <TableCell>{app.applicantMajor}</TableCell>
+                <TableCell>{app.applicantCode}</TableCell>
+                <TableCell>{app.applicantPhoneNumber}</TableCell>
+                <TableCell>{app.supervisorName}</TableCell>
+                <TableCell>{app.supervisorMajor}</TableCell>
+                <TableCell>{app.supervisorPhoneNumber}</TableCell>
                 <TableCell>{app.status}</TableCell>
                 <TableCell>
                   {app.status === '검토' && (

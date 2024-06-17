@@ -40,7 +40,7 @@ const ClubMembers = ({ id }) => {
     }
 
     setMembers(initialMembers);
-    // fetchClubData();
+    fetchClubData();
   }, []);
 
   const handleSelectMember = (event, memberId) => {

@@ -18,7 +18,7 @@ const AdminLogin = ({onLogin}) => {
     
             const res = await axios.post(process.env.REACT_APP_SERVER_URL + '/admin/login', {
                 id: username,
-                password: password
+                pw: password
             });
     
             console.log("success", res.data);
