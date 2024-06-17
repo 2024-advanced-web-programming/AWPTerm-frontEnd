@@ -9,7 +9,9 @@ const AdminLogin = ({onLogin}) => {
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (event) => {
+      event.preventDefault();
+
         try {
             console.log(username);
             console.log(password);
@@ -22,8 +24,8 @@ const AdminLogin = ({onLogin}) => {
             console.log("success", res.data);
             
             if(res.status === 200) {
-              onLogin("admin");
-              navigate("/admin/main");
+              onLogin("adminLoggedIn");
+              navigate('/admin/main', { replace: true });
             }
     
         } catch (error) {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import './App.css';
 import Top from './components/main/top';
 import Login from './components/user/login';
@@ -30,6 +30,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
+  // const navigate = useNavigate();
 
   const checkCookie = (cookieName) => {
     const cookies = document.cookie.split(';').map(cookie => cookie.trim());
@@ -60,22 +61,16 @@ function App() {
     }
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      const res = await axios.post(process.env.REACT_APP_SERVER_URL + '/member/logout', null);
-      if (res.status === 200) {
-        document.cookie = 'JSESSIONID=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        setIsLoggedIn(false);
-        setIsAdminLoggedIn(false);
-        setUserName('');
-        window.location.reload(); // 페이지 새로고침
-      }
-    } catch (error) {
-      console.error(error);
+  const handleLogout = async (isSuccess) => {
+    if(isSuccess) {
+      setIsLoggedIn(false);
+      setIsAdminLoggedIn(false);
+      setUserName('');
     }
   };
 
   const handleLogin = (userName) => {
+    console.log(userName);
     setIsLoggedIn(true);
     if(userName === "adminLoggedIn") {
       setUserName("admin");
@@ -88,7 +83,7 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <Navbar isLoggedIn={isLoggedIn} userName={userName} onLogout={handleLogout} />
+        <Navbar isLoggedIn={isLoggedIn} userName={userName} onLogout={handleLogout} isAdminLoggedIn={isAdminLoggedIn} />
         <div className="Body">
           <Routes>
             <Route path="/" element={<Top />} />

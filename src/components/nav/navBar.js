@@ -7,9 +7,43 @@ import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import { useNavigate } from 'react-router-dom';
 import { display } from '@mui/system';
+import axios from 'axios';
 
-const Navbar = ({ isLoggedIn, userName, onLogout }) => {
+const Navbar = ({ isLoggedIn, userName, onLogout, isAdminLoggedIn }) => {
   const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    if(isAdminLoggedIn) {
+      await handleAdminLogout();
+      return;
+    }
+
+    try {
+      const res = await axios.post(process.env.REACT_APP_SERVER_URL + '/member/logout', null);
+      if (res.status === 200) {
+        document.cookie = 'JSESSIONID=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        onLogout(true);
+        // window.location.reload(); // 페이지 새로고침
+        navigate("/");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleAdminLogout = async () => {
+    try {
+      const res = await axios.post(process.env.REACT_APP_SERVER_URL + '/admin/logout', null);
+      if(res.status === 200) {
+        document.cookie = 'JSESSIONID=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        onLogout(true);
+        // window.location.reload();
+        navigate("/");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <>
@@ -24,7 +58,7 @@ const Navbar = ({ isLoggedIn, userName, onLogout }) => {
                 {userName} 님 안녕하세요!
               </Typography>
               <Button color="inherit" onClick={() => navigate('/mypage')}>마이페이지</Button>
-              <Button color="inherit" onClick={onLogout}>
+              <Button color="inherit" onClick={handleLogout}>
                 로그아웃
               </Button>
             </Box>
