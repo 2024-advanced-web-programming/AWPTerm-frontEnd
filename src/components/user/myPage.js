@@ -12,8 +12,8 @@ const MyPage = () => {
     useEffect(() => {
         const fetchClub = async () => {
             try {
-                const data = await axios.get(process.env.REACT_APP_SERVER_URL + "");
-
+                const data = await axios.get(process.env.REACT_APP_SERVER_URL + "/member/president/clubs");
+                console.log(data.data)
                 setClubList(data.data);
             } catch (error) {
                 console.error(error);

@@ -20,7 +20,7 @@ const Login = ({ onLogin }) => {
       console.log(res);
 
       if (res.status === 200) {
-        return res.data; // 서버로부터 사용자 이름을 가져옴
+        return res.data.name; // 서버로부터 사용자 이름을 가져옴
       }
     } catch (error) {
       console.error(error);
