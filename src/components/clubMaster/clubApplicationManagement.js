@@ -26,7 +26,8 @@ const ClubApplicationManagement = (id) => {
   useEffect(() => {
     const fetchData = async () => {
         try {
-            const data = await axios.get(process.env.REACT_APP_SERVER_URL + "");
+            const data = await axios.get(process.env.REACT_APP_SERVER_URL + `/club/application/list/${id.id}`);
+            console.log(data)
             setMembershipApplications(data.data);
         } catch (error) {
             console.error(error);
