@@ -13,17 +13,17 @@ const Top = () => {
     { id: 1, title: "동아리 행사 안내 1", author: "Author 5", date: "2023-06-13", views: 300, type: "club" },
     { id: 2, title: "동아리 행사 안내 2", author: "Author 5", date: "2023-06-13", views: 300, type: "club" },
     { id: 3, title: "동아리 행사 안내 3", author: "Author 5", date: "2023-06-13", views: 300, type: "club" },
-    { id: 1, title: "동아리 행사 안내 1", author: "Author 5", date: "2023-06-13", views: 300, type: "club" },
-    { id: 2, title: "동아리 행사 안내 2", author: "Author 5", date: "2023-06-13", views: 300, type: "club" },
-    { id: 3, title: "동아리 행사 안내 3", author: "Author 5", date: "2023-06-13", views: 300, type: "club" }
+    { id: 4, title: "동아리 행사 안내 1", author: "Author 5", date: "2023-06-13", views: 300, type: "club" },
+    { id: 5, title: "동아리 행사 안내 2", author: "Author 5", date: "2023-06-13", views: 300, type: "club" },
+    { id: 6, title: "동아리 행사 안내 3", author: "Author 5", date: "2023-06-13", views: 300, type: "club" }
   ]);
   const [recruitmentPosts, setRecruitmentPosts] = useState([
     { id: 1, title: "부원 모집 게시글 1", author: "Author 1", date: "2023-06-17", views: 100, type: "recruit" },
     { id: 2, title: "부원 모집 게시글 2", author: "Author 1", date: "2023-06-17", views: 100, type: "recruit" },
     { id: 3, title: "부원 모집 게시글 3", author: "Author 1", date: "2023-06-17", views: 100, type: "recruit" },
-    { id: 1, title: "부원 모집 게시글 1", author: "Author 1", date: "2023-06-17", views: 100, type: "recruit" },
-    { id: 2, title: "부원 모집 게시글 2", author: "Author 1", date: "2023-06-17", views: 100, type: "recruit" },
-    { id: 3, title: "부원 모집 게시글 3", author: "Author 1", date: "2023-06-17", views: 100, type: "recruit" }
+    { id: 4, title: "부원 모집 게시글 1", author: "Author 1", date: "2023-06-17", views: 100, type: "recruit" },
+    { id: 5, title: "부원 모집 게시글 2", author: "Author 1", date: "2023-06-17", views: 100, type: "recruit" },
+    { id: 6, title: "부원 모집 게시글 3", author: "Author 1", date: "2023-06-17", views: 100, type: "recruit" }
   ]);
   const [photos, setPhotos] = useState([
     { id: 1, title: "활동 사진 1", thumbnailUrl: "https://via.placeholder.com/150" },
