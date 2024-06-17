@@ -68,7 +68,7 @@ const RegistClubStatus = () => {
   //TODO 신청자 이름, 신청자 학번은 /member/me에서 받아온 정보 props로 넘겨서 할당시키면 될듯
   const showRejectString = (id) => {
     const club = statusList.find((row) => row.id === id);
-    const rejectString = club ? club.rejectString : '사유를 찾을 수 없습니다.';
+    const rejectString = club ? club.rejectedReason : '사유를 찾을 수 없습니다.';
     Swal.fire({
       title: "거절 사유",
       text: rejectString,
