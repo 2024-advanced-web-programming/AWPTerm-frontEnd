@@ -1,32 +1,119 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
-// import NavBar from './components/nav/navBar';
 import Top from './components/main/top';
 import Login from './components/user/login';
 import Register from './components/user/register';
-import KakaoLoginHandeler from './components/handler/kakaoLoginHandler';
+import KakaoLoginHandler from './components/handler/kakaoLoginHandler';
 import RegistClub from './components/club/RegistClub';
 import RegistClubStatus from './components/club/RegistClubStatus';
 import RegistClubApprove from './components/management/RegistClubApprove';
 import AdminLogin from './components/management/adminLogin';
+import ApplicationClub from './components/club/applicationClub';
+import Navbar from './components/nav/navBar';
+import axios from 'axios';
+import ApplicationStatus from './components/club/applicationStatus';
+import ClubApplicationManagement from './components/clubMaster/clubApplicationManagement';
+import ClubManagement from './components/clubMaster/clubManagement';
+import ClubPage from './components/club/clubPage';
+import Editor from './components/editor/editor';
+import ClubList from './components/main/clubList';
+import ClubEvents from './components/main/clubEvents';
+import ClubPhotos from './components/main/clubPhotos';
+import ClubVideos from './components/main/clubVideos';
+import ClubRecruit from './components/main/clubRecruit';
+import MyPage from './components/user/myPage';
+import ContentPage from './components/main/contentPage';
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState('');
+
+  const checkCookie = (cookieName) => {
+    const cookies = document.cookie.split(';').map(cookie => cookie.trim());
+    for (const cookie of cookies) {
+      if (cookie.startsWith(`${cookieName}=`)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const checkLoginStatus = async () => {
+    try {
+      const res = await axios.get(process.env.REACT_APP_SERVER_URL + '/member/me');
+      if (res.status === 200) {
+        setIsLoggedIn(true);
+        setUserName(res.data); // 서버로부터 사용자 이름을 가져옴
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    if (checkCookie('JSESSIONID')) {
+      checkLoginStatus();
+    }
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      const res = await axios.post(process.env.REACT_APP_SERVER_URL + '/member/logout', null);
+      if (res.status === 200) {
+        document.cookie = 'JSESSIONID=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        setIsLoggedIn(false);
+        setUserName('');
+        window.location.reload(); // 페이지 새로고침
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleLogin = (userName) => {
+    setIsLoggedIn(true);
+    setUserName(userName);
+  };
+
   return (
     <Router>
       <div className="App">
-        {/* <NavBar /> */}
-        <Routes>
-          <Route path="/" element={<Top />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/member/kakao/callback" element={<KakaoLoginHandeler />} />
-          <Route path="/registClub" element={<RegistClub />} />
-          <Route path="/registClub/status" element={<RegistClubStatus />} />
-          <Route path="/management/registClub" element={<RegistClubApprove />} />
-          {/* 다른 라우팅 경로에 대한 Route 추가 */}
-        </Routes>
+        <Navbar isLoggedIn={isLoggedIn} userName={userName} onLogout={handleLogout} />
+        <div className="Body">
+          <Routes>
+            <Route path="/" element={<Top />} />
+
+            <Route path="/mypage" element={<MyPage />} />
+
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/member/kakao/callback" element={<KakaoLoginHandler onLogin={handleLogin} />} />
+
+            <Route path="/club/regist" element={<RegistClub />} />
+            <Route path="/club/regist/status" element={<RegistClubStatus />} />
+            <Route path="/management/registClub" element={<RegistClubApprove />} />
+
+            <Route path="/club/list" element={<ClubList />} />
+            <Route path="/club/events" element={<ClubEvents />} />
+            <Route path="/club/photos" element={<ClubPhotos />} />
+            <Route path="/club/videos" element={<ClubVideos />} />
+            <Route path="/club/recruit" element={<ClubRecruit />} />
+
+            <Route path="/club/application/:id" element={<ApplicationClub />} />
+            <Route path="/club/application/status" element={<ApplicationStatus />} />
+            <Route path="/club/application/master/:id" element={<ClubApplicationManagement />} />
+
+            <Route path="/club/config/:id" element={<ClubManagement />} />
+            <Route path="/club/:id" element={<ClubPage />} />
+
+            <Route path="/editor" element={<Editor />} />
+
+            <Route path="/post/:id" element={<ContentPage />} />
+            {/* 다른 라우팅 경로에 대한 Route 추가 */}
+          </Routes>
+        </div>
       </div>
     </Router>
   );

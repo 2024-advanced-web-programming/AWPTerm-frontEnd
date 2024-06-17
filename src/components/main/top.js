@@ -1,33 +1,191 @@
-import React from 'react';
-import { Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { Container, Typography, Grid, Card, CardContent, CardMedia, Button, Select, MenuItem } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 const Top = () => {
+  const [clubs, setClubs] = useState([
+    {id: -1, name: "전체 조회"},
+    {id: 1, name: "BOSS"}
+  ]);
+  const [selectedClub, setSelectedClub] = useState({ id: -1, name: "전체 조회" });
+  const [events, setEvents] = useState([
+    { id: 1, title: "동아리 행사 안내 1" },
+    { id: 2, title: "동아리 행사 안내 2" },
+    { id: 3, title: "동아리 행사 안내 3" }
+  ]);
+  const [recruitmentPosts, setRecruitmentPosts] = useState([
+    { id: 1, title: "부원 모집 게시글 1" },
+    { id: 2, title: "부원 모집 게시글 2" },
+    { id: 3, title: "부원 모집 게시글 3" }
+  ]);
+  const [photos, setPhotos] = useState([
+    { id: 1, title: "활동 사진 1", thumbnailUrl: "https://via.placeholder.com/150" },
+    { id: 2, title: "활동 사진 2", thumbnailUrl: "https://via.placeholder.com/150" },
+    { id: 3, title: "활동 사진 3", thumbnailUrl: "https://via.placeholder.com/150" }
+  ]);
+  const [videos, setVideos] = useState([
+    { id: 1, title: "활동 영상 1", youtubeId: "abc123" },
+    { id: 2, title: "활동 영상 2", youtubeId: "def456" },
+    { id: 3, title: "활동 영상 3", youtubeId: "ghi789" }
+  ]);
+
   const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    try {
-      const res = await axios.post(process.env.REACT_APP_SERVER_URL + '/member/logout', null);
-      console.log(res);
+  // 데이터 로딩
+  useEffect(() => {
+    // 동아리 공지 + 전체 공지
+    axios.get(`${process.env.REACT_APP_SERVER_URL}/events`)
+      .then((response) => {
+        setEvents(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching events:", error);
+      });
 
-      if(res.status === 200) {
-        document.cookie = 'JSESSIONID=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        navigate("/login");
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
+    // 부원 모집 게시판
+    axios.get(`${process.env.REACT_APP_SERVER_URL}/recruitment`)
+      .then((response) => {
+        setRecruitmentPosts(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching recruitment posts:", error);
+      });
+
+    // 활동 사진
+    axios.get(`${process.env.REACT_APP_SERVER_URL}/photos`)
+      .then((response) => {
+        setPhotos(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching photos:", error);
+      });
+
+    // 활동 영상
+    axios.get(`${process.env.REACT_APP_SERVER_URL}/videos`)
+      .then((response) => {
+        setVideos(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching videos:", error);
+      });
+  }, []);
+
+  const handleSeeMore = (type) => {
+    // 더보기 버튼 클릭 시 처리
+    console.log(`See more ${type}`);
+    // 필요한 동작 추가
+  };
+
+  const handleClubChange = async (event) => {
+    await setSelectedClub(event.target.value);
+    console.log(selectedClub);
+  };
 
   return (
-    <div>
-      <h1>Hello, World!</h1>
-      <Button onClick={() => {navigate('/registClub')}}>동아리 등록 신청 페이지</Button>
-      <Button onClick={() => {navigate('/registClub/status')}}>동아리 등록 신청 현황 페이지</Button>
-      <Button onClick={() => {navigate('/management/registClub')}}>동아리 등록 신청 승인/거절(관리자)</Button>
-      <Button onClick={handleLogout}>로그아웃</Button>
-    </div>
+    <Container maxWidth="lg" style={{ marginTop: "2rem" }}>
+      {/* <Select
+        labelId="club-select-label"
+        value={selectedClub}
+        onChange={handleClubChange}
+        required
+      >
+        {clubs.map((club) => (
+          <MenuItem key={club.id} value={club}>
+            {club.name}
+          </MenuItem>
+        ))}
+      </Select> */}
+
+      {/* 동아리 공지 + 전체 공지 */}
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={6}>
+          <Card>
+            <CardContent>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography variant="h5" gutterBottom>동아리 행사 공지</Typography>
+                <Button variant="outlined" onClick={() => {navigate("/club/events")}}>더 보기</Button>
+              </div>
+              {/* 공지 목록 렌더링 */}
+              {events.slice(0, 5).map((event) => (
+                <Typography key={event.id} gutterBottom>{event.title}</Typography>
+              ))}
+            </CardContent>
+          </Card>
+        </Grid>
+        <Grid item xs={12} md={6}>
+          <Card>
+            <CardContent>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography variant="h5" gutterBottom>부원 모집 게시판</Typography>
+                <Button variant="outlined" onClick={() => {navigate("/club/recruit")}}>더 보기</Button>
+              </div>
+              {recruitmentPosts.slice(0, 5).map((post) => (
+              <Typography key={post.id} gutterBottom>{post.title}</Typography>
+          ))}
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+
+      {/* 활동 사진 */}
+      <Card style={{ marginTop: "2rem" }}>
+        <CardContent>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography variant="h5" gutterBottom>활동 사진</Typography>
+              <Button variant="outlined" onClick={() => {navigate("/club/photos")}}>더 보기</Button>
+              </div>
+          
+          <Grid container spacing={2}>
+            {photos.slice(0, 3).map((photo) => (
+              <Grid item key={photo.id} xs={12} sm={6} md={4}>
+                <Card>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={photo.thumbnailUrl} // 썸네일 이미지 URL
+                    alt={photo.title}
+                  />
+                  <CardContent>
+                    <Typography gutterBottom>{photo.title}</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+          
+        </CardContent>
+      </Card>
+
+      {/* 활동 영상 */}
+      <Card style={{ marginTop: "2rem" }}>
+        <CardContent>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <Typography variant="h5" gutterBottom>활동 영상</Typography>
+        <Button variant="outlined" onClick={() => {navigate("/club/videos")}}>더 보기</Button>
+              </div>
+          
+          <Grid container spacing={2}>
+            {videos.slice(0, 3).map((video) => (
+              <Grid item key={video.id} xs={12} sm={6} md={4}>
+                <Card>
+                  <CardMedia
+                    component="img"
+                    height="140"
+                    image={`https://img.youtube.com/vi/${video.youtubeId}/mqdefault.jpg`} // 유튜브 썸네일 가져오기
+                    alt={video.title}
+                  />
+                  <CardContent>
+                    <Typography gutterBottom>{video.title}</Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+          
+        </CardContent>
+      </Card>
+    </Container>
   );
 };
 

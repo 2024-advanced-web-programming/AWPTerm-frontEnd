@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import axios from "axios";
 
-const KakaoLoginHandeler = (props) => {
+const KakaoLoginHandler = ({ onLogin }) => {
   const navigate = useNavigate();
   const code = new URL(window.location.href).searchParams.get("code");
   const access_token_uri = "https://kauth.kakao.com/oauth/token";
@@ -11,8 +11,8 @@ const KakaoLoginHandeler = (props) => {
 
   useEffect(() => {
     const sendTokenToBack = async () => {
-      return await axios.get(process.env.REACT_APP_SERVER_URL + `/member/kakao/token?code=${code}`)
-    }
+      return await axios.get(process.env.REACT_APP_SERVER_URL + `/member/kakao/token?code=${code}`);
+    };
 
     const getAccessToken = async () => {
       const header = {
@@ -36,9 +36,22 @@ const KakaoLoginHandeler = (props) => {
       return accessToken;
     };
 
+    const checkLoginStatus = async () => {
+      try {
+        const res = await axios.get(process.env.REACT_APP_SERVER_URL + '/member/me');
+  
+        console.log(res);
+  
+        if (res.status === 200) {
+          return res.data; // 서버로부터 사용자 이름을 가져옴
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     const kakaoLogin = async () => {
       const returnData = (await sendTokenToBack()).data;
-      // const accessToken = await getAccessToken();
       console.log("acc", returnData);
 
       try {
@@ -52,14 +65,10 @@ const KakaoLoginHandeler = (props) => {
 
         console.log("success", res);
 
-        if(res.status === 200) {
+        if (res.status === 200) {
+          onLogin(await checkLoginStatus()); // 로그인 상태 업데이트
           navigate("/");
         }
-
-        // if(res.data.code === "UNPROCESSABLE_ENTITY") {
-        //   navigate("/register?code=" + code + "&accessToken=" + accessToken);
-        // }
-
       } catch (error) {
         console.log("error2");
         console.log(error);
@@ -72,32 +81,10 @@ const KakaoLoginHandeler = (props) => {
     };
 
     kakaoLogin();
-  });
-
-  // useEffect(() => {
-  //     const kakaoLogin = async () => {
-  //       await axios({
-  //         method: "GET",
-  //         url: `${process.env.REACT_APP_SERVER_URL + '/member/kakao/callback/v2'}?code=${code}`,
-  //         headers: {
-  //           "Content-Type": "application/json;charset=utf-8", //json형태로 데이터를 보내겠다는뜻
-  //         //   "Access-Control-Allow-Origin": "*", //이건 cors 에러때문에 넣어둔것. 당신의 프로젝트에 맞게 지워도됨
-  //         },
-  //       }).then((res) => { //백에서 완료후 우리사이트 전용 토큰 넘겨주는게 성공했다면
-  //         console.log("res", res);
-  //         //계속 쓸 정보들( ex: 이름) 등은 localStorage에 저장해두자
-  //         // localStorage.setItem("name", res.data.account.kakaoName);
-  //         console.log("id", res.data.data.code);
-  //         console.log("pw", res.data.data.token);
-  //         //로그인이 성공하면 이동할 페이지
-  //         navigate("/register");
-  //       });
-  //     };
-  //     kakaoLogin();
-  //   }, [props.history]);
+  }, [code, navigate, onLogin]);
 
   return (
-    <div className="LoginHandeler">
+    <div className="LoginHandler">
       <div className="notice">
         <p>로그인 중입니다.</p>
         <p>잠시만 기다려주세요.</p>
@@ -107,4 +94,4 @@ const KakaoLoginHandeler = (props) => {
   );
 };
 
-export default KakaoLoginHandeler;
+export default KakaoLoginHandler;

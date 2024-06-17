@@ -3,9 +3,8 @@ import { TextField, Button, Typography, Container } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
+const Login = ({ onLogin }) => {
   const navigate = useNavigate();
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -14,46 +13,41 @@ const Login = () => {
 
   const kakaoURL = `https://kauth.kakao.com/oauth/authorize?client_id=${rest_api_key}&redirect_uri=${redirect_uri}&response_type=code`
 
+  const checkLoginStatus = async () => {
+    try {
+      const res = await axios.get(process.env.REACT_APP_SERVER_URL + '/member/me');
+
+      console.log(res);
+
+      if (res.status === 200) {
+        return res.data; // 서버로부터 사용자 이름을 가져옴
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     
     try {
-        console.log(username);
-        console.log(password);
-
         const res = await axios.post(process.env.REACT_APP_SERVER_URL + '/member/login', {
             id: username,
             password: password
         });
-
-        console.log("success", res.data);
         
-        if(res.status === 200) {
+        if (res.status === 200) {
+          onLogin(await checkLoginStatus()); // 로그인 상태 업데이트
           navigate("/");
         }
-
     } catch (error) {
         console.log("fail", error);
     }
   };
 
-  const handleKakaoLogin = async () => {
-    console.log("카카오 로그인");    
-
+  const handleKakaoLogin = () => {
     window.location.href = kakaoURL;
   }
-
-//   const getCode = async() => {
-    
-
-//     const code = new URL(window.location.href).searchParams.get("code");
-//     const id = new URL(window.location.href).searchParams.get("id");
-//     const password = new URL(window.location.href).searchParams.get("password");
-
-//     console.log("code", code);
-//     console.log("id", id);
-//     console.log("pw", password);
-//   }
 
   return (
     <Container maxWidth="xs">
