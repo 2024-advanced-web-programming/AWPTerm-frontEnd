@@ -4,7 +4,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const AdminLogin = () => {
+const AdminLogin = ({onLogin}) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const navigate = useNavigate();
@@ -22,7 +22,8 @@ const AdminLogin = () => {
             console.log("success", res.data);
             
             if(res.status === 200) {
-            //   navigate("/");
+              onLogin("admin");
+              navigate("/admin/main");
             }
     
         } catch (error) {

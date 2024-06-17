@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
 import QuillEditor from "./quillEditor";
 
 const Editor = () => {
-    return(
-      <QuillEditor /> 
-    );
-}
+  const id = useParams();
+  return(
+    <div>
+      <QuillEditor />
+    </div>
+  );
+};
 
 export default Editor;

@@ -24,6 +24,7 @@ import ClubVideos from './components/main/clubVideos';
 import ClubRecruit from './components/main/clubRecruit';
 import MyPage from './components/user/myPage';
 import ContentPage from './components/main/contentPage';
+import AdminMain from './components/main/adminMain';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -83,11 +84,12 @@ function App() {
         <div className="Body">
           <Routes>
             <Route path="/" element={<Top />} />
+            <Route path="/admin/main" element={<AdminMain />} />
 
             <Route path="/mypage" element={<MyPage />} />
 
             <Route path="/login" element={<Login onLogin={handleLogin} />} />
-            <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin" element={<AdminLogin onLogin={handleLogin} />} />
             <Route path="/register" element={<Register />} />
             <Route path="/member/kakao/callback" element={<KakaoLoginHandler onLogin={handleLogin} />} />
 
@@ -108,7 +110,7 @@ function App() {
             <Route path="/club/config/:id" element={<ClubManagement />} />
             {/* <Route path="/club/:id" element={<ClubPage />} /> */}
 
-            <Route path="/editor" element={<Editor />} />
+            <Route path="/editor/:id" element={<Editor />} />
 
             <Route path="/post/:id" element={<ContentPage />} />
             {/* 다른 라우팅 경로에 대한 Route 추가 */}

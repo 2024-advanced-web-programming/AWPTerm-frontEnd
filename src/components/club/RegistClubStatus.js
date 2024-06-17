@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 
 const RegistClubStatus = () => {
   // 더미 데이터 (임의로 생성)
   const dummyData = [
-    { id: 1, clubType: '중앙', clubName: '예술 동아리', applicantName: '홍길동', applicantID: '20230001', advisorName: '김교수', status: '검토' },
-    { id: 2, clubType: '학과', clubName: '과학 동아리', applicantName: '이순신', applicantID: '20230002', advisorName: '박교수', status: '승인' },
-    { id: 3, clubType: '중앙', clubName: '음악 동아리', applicantName: '심청', applicantID: '20230003', advisorName: '최교수', status: '거절' },
+    { id: 1, clubType: '중앙', clubName: '예술 동아리', applicantName: '홍길동', applicantID: '20230001', advisorName: '김교수', status: '검토', rejectString: '' },
+    { id: 2, clubType: '학과', clubName: '과학 동아리', applicantName: '이순신', applicantID: '20230002', advisorName: '박교수', status: '승인', rejectString: '' },
+    { id: 3, clubType: '중앙', clubName: '음악 동아리', applicantName: '심청', applicantID: '20230003', advisorName: '최교수', status: '거절', rejectString: '폭력적인 동아리는 승인하지 않습니다.' },
   ];
 
   const [statusList, setStatusList] = useState(dummyData);
@@ -37,8 +38,18 @@ const RegistClubStatus = () => {
       }
     }
 
-    fetchClubStatusList();
+    // fetchClubStatusList();
   }, [])
+
+  const showRejectString = (id) => {
+    const club = statusList.find((row) => row.id === id);
+    const rejectString = club ? club.rejectString : '사유를 찾을 수 없습니다.';
+    Swal.fire({
+      title: "거절 사유",
+      text: rejectString,
+      showCloseButton: true
+    })
+  }
 
   return (
     <TableContainer component={Paper}>
@@ -51,6 +62,7 @@ const RegistClubStatus = () => {
             <TableCell>신청자 학번</TableCell>
             <TableCell>지도교수 이름</TableCell>
             <TableCell>동아리 신청 현황</TableCell>
+            <TableCell>비고</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -62,6 +74,9 @@ const RegistClubStatus = () => {
               <TableCell>{row.applicantID}</TableCell>
               <TableCell>{row.advisorName}</TableCell>
               <TableCell>{row.status}</TableCell>
+              <TableCell>
+                {row.status === '거절' ? <Button variant="contained" color="primary" onClick={() => {showRejectString(row.id)}}>거절 사유</Button> : <div></div>}
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
