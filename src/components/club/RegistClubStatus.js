@@ -14,10 +14,9 @@ const RegistClubStatus = () => {
   const [statusList, setStatusList] = useState(dummyData);
 
 
-  // TODO : 통신 제대로 구현 -> 백엔드 컨트롤러 코드 없음
   const getclubList = async () => {
     try {
-      const res = await axios.get(process.env.REACT_APP_SERVER_URL + '/member/applied/clubs');
+      const res = await axios.get(process.env.REACT_APP_SERVER_URL + '/member/registered/clubs');
 
       console.log(res);
 
@@ -38,9 +37,10 @@ const RegistClubStatus = () => {
       }
     }
 
-    // fetchClubStatusList();
+    fetchClubStatusList();
   }, [])
 
+  //TODO 신청자 이름, 신청자 학번은 /member/me에서 받아온 정보 props로 넘겨서 할당시키면 될듯
   const showRejectString = (id) => {
     const club = statusList.find((row) => row.id === id);
     const rejectString = club ? club.rejectString : '사유를 찾을 수 없습니다.';
@@ -69,10 +69,10 @@ const RegistClubStatus = () => {
           {statusList.map((row) => (
             <TableRow key={row.id}>
               <TableCell>{row.clubType}</TableCell>
-              <TableCell>{row.clubName}</TableCell>
+              <TableCell>{row.name}</TableCell>
               <TableCell>{row.applicantName}</TableCell>
               <TableCell>{row.applicantID}</TableCell>
-              <TableCell>{row.advisorName}</TableCell>
+              <TableCell>{row.supervisorName}</TableCell>
               <TableCell>{row.status}</TableCell>
               <TableCell>
                 {row.status === '거절' ? <Button variant="contained" color="primary" onClick={() => {showRejectString(row.id)}}>거절 사유</Button> : <div></div>}

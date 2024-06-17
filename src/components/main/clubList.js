@@ -117,7 +117,7 @@ const ClubList = () => {
         }
     }
 
-    // fetchClubs();
+    fetchClubs();
   }, [])
 
   const startIndex = (page - 1) * clubsPerPage;
@@ -130,7 +130,7 @@ const ClubList = () => {
         imageHeight: 200,
         imageAlt: "대표 사진",
         title: club.name,
-        html: `${club.description}<br>회장 : ${club.president}<br>정기모임시간 : 매주 화요일 19시`,
+        html: `${club.introduction}<br>회장 : ${club.presidentName}<br>정기모임시간 :${club.regularMeetingTime}`,
         confirmButtonText: "가입 신청",
         cancelButtonText: "취소",
         showCancelButton: true,

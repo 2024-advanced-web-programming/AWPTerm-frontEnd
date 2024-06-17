@@ -13,7 +13,7 @@ import axios from "axios";
 
 const ClubBasicInfo = ({ id }) => {
   const [clubName, setClubName] = useState("넹면");
-  const [description, setDescription] = useState("냉면 먹고싶은 동아리에요");
+  const [introduction, setIntroduction] = useState("냉면 먹고싶은 동아리에요");
   const [regularMeetingTime, setRegularMeetingTime] = useState("매주 화요일 6시");
   const [president, setPresident] = useState("");
   const [vicePresident, setVicePresident] = useState("");
@@ -33,8 +33,9 @@ const ClubBasicInfo = ({ id }) => {
     const fetchData = async () => {
       try {
         const res = await axios.get(`${process.env.REACT_APP_SERVER_URL}/club/${id}`);
+        console.log(res)
         setClubName(res.data.name);
-        setDescription(res.data.description);
+        setIntroduction(res.data.introduction);
         setRegularMeetingTime(res.data.regularMeetingTime);
         setMembers(res.data.members); // 멤버 목록 설정
         // 회장, 부회장, 총무 기본 값 설정
@@ -57,7 +58,7 @@ const ClubBasicInfo = ({ id }) => {
     };
 
     fetchData();
-  }, [id, members]);
+  }, []);
 
   const handleApplicationFileChange = (e) => {
     setSelectedApplicationFile(e.target.files[0]);
@@ -79,7 +80,7 @@ const ClubBasicInfo = ({ id }) => {
 
     const formData = new FormData();
     formData.append("clubName", clubName);
-    formData.append("description", description);
+    formData.append("introduction", introduction);
     formData.append("regularMeetingTime", regularMeetingTime);
     formData.append("president", president);
     formData.append("vicePresident", vicePresident);
@@ -123,8 +124,8 @@ const ClubBasicInfo = ({ id }) => {
           fullWidth
           multiline
           rows={4}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
+          value={introduction}
+          onChange={(e) => setIntroduction(e.target.value)}
           required
           margin="normal"
         />

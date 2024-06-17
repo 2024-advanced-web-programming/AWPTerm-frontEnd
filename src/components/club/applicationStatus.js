@@ -26,7 +26,7 @@ const ApplicationStatus = () => {
   return (
     <Box p={2}>
       <Typography variant="h5" gutterBottom>
-        가입한 동아리 현황
+        가입 신청 현황
       </Typography>
       <Grid container spacing={2}>
         {clubData.map((club) => (
