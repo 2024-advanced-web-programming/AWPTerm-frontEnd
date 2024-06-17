@@ -159,6 +159,9 @@ const ClubBasicInfo = ({ id }) => {
         <FormControl variant="outlined" fullWidth margin="normal">
           <InputLabel>부회장</InputLabel>
           <Select value={vicePresident} onChange={(e) => setVicePresident(e.target.value)} label="부회장">
+            <MenuItem key={-1} value={""}>
+                  미선택
+            </MenuItem>
             {members
               .map((member) => (
                 <MenuItem key={member.id} value={member.name}>
@@ -170,6 +173,9 @@ const ClubBasicInfo = ({ id }) => {
         <FormControl variant="outlined" fullWidth margin="normal">
           <InputLabel>총무</InputLabel>
           <Select value={treasurer} onChange={(e) => setTreasurer(e.target.value)} label="총무">
+          <MenuItem key={-1} value={""}>
+                  미선택
+            </MenuItem>
             {members
               .map((member) => (
                 <MenuItem key={member.id} value={member.name}>
