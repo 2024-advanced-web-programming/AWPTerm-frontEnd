@@ -49,11 +49,11 @@ const RegistClub = () => {
   // const [advisorList, setAdvisorList] = useState([]);
   const [advisorList, setAdvisorList] = useState(dummyAdvisorList);
   const [selectedAdvisor, setSelectedAdvisor] = useState(null);
+  const [isMember, setIsMember] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
-    // 여기에 동아리 등록 정보를 처리하는 코드를 추가할 수 있습니다.
     console.log('동아리 등록 정보:', {
       clubType,
       clubName,
@@ -82,7 +82,7 @@ const RegistClub = () => {
 
       console.log(res);
 
-      if(res.status === 200) {
+      if(res.status === 201) {
         navigate('/');
       }
 
@@ -116,6 +116,36 @@ const RegistClub = () => {
     };
 
     fetchProfessorList();
+  }, []);
+
+  const getMyInfo = async () => {
+    try {
+      const res = await axios.get(process.env.REACT_APP_SERVER_URL + "/member/me");
+
+      if(res.status === 200) {
+        setIsMember(true);
+        return res.data;
+      }
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
+  }
+
+  useEffect(() => {
+    const fetchMyData = async () => {
+      const data = await getMyInfo();
+      // const data = null;
+      console.log(data);
+      if(data) {
+        setApplicantName(data.name);
+        setApplicantAffiliation(data.major);
+        setApplicantID(data.code);
+        setApplicantContact(data.phoneNumber);
+      }
+    };
+
+    fetchMyData();
   }, []);
 
 
@@ -160,6 +190,7 @@ const RegistClub = () => {
         value={applicantName}
         onChange={(e) => setApplicantName(e.target.value)}
         sx={{ marginBottom: 2 }}
+        disabled={isMember}
       />
       <TextField
         fullWidth
@@ -167,6 +198,7 @@ const RegistClub = () => {
         value={applicantAffiliation}
         onChange={(e) => setApplicantAffiliation(e.target.value)}
         sx={{ marginBottom: 2 }}
+        disabled={isMember}
       />
       <TextField
         fullWidth
@@ -174,6 +206,7 @@ const RegistClub = () => {
         value={applicantID}
         onChange={(e) => setApplicantID(e.target.value)}
         sx={{ marginBottom: 2 }}
+        disabled={isMember}
       />
       <TextField
         fullWidth
@@ -181,6 +214,7 @@ const RegistClub = () => {
         value={applicantContact}
         onChange={(e) => setApplicantContact(e.target.value)}
         sx={{ marginBottom: 2 }}
+        disabled={isMember}
       />
       <Autocomplete
         id='professor'

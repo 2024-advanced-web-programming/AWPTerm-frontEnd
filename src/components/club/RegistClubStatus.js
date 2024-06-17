@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button } from '@mui/material';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useNavigate } from 'react-router-dom';
 
 const RegistClubStatus = () => {
   // 더미 데이터 (임의로 생성)
@@ -12,7 +13,8 @@ const RegistClubStatus = () => {
   ];
 
   const [statusList, setStatusList] = useState(dummyData);
-
+  const [me, setMe] = useState({id: 1, name: "dummy", code: "1234"});
+  const navigate = useNavigate();
 
   const getclubList = async () => {
     try {
@@ -39,6 +41,29 @@ const RegistClubStatus = () => {
 
     fetchClubStatusList();
   }, [])
+
+  useEffect(() => {
+    const fetchMyInfo = async () => {
+      try {
+        const res = await axios.get(process.env.REACT_APP_SERVER_URL + '/member/me');
+        if(res.status === 200) {
+          setMe(res.data);
+        }
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          title: "서버와의 통신에 문제가 생겼어요!",
+          icon: "error",
+          showConfirmButton: false
+        }).then((res) => {
+          navigate('/');
+        })
+      }
+    };
+
+    fetchMyInfo();
+    console.log(me);
+  }, []);
 
   //TODO 신청자 이름, 신청자 학번은 /member/me에서 받아온 정보 props로 넘겨서 할당시키면 될듯
   const showRejectString = (id) => {
@@ -70,8 +95,8 @@ const RegistClubStatus = () => {
             <TableRow key={row.id}>
               <TableCell>{row.clubType}</TableCell>
               <TableCell>{row.name}</TableCell>
-              <TableCell>{row.applicantName}</TableCell>
-              <TableCell>{row.applicantID}</TableCell>
+              <TableCell>{me.name}</TableCell>
+              <TableCell>{me.code}</TableCell>
               <TableCell>{row.supervisorName}</TableCell>
               <TableCell>{row.status}</TableCell>
               <TableCell>

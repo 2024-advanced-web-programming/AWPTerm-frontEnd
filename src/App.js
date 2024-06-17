@@ -25,6 +25,7 @@ import ClubRecruit from './components/main/clubRecruit';
 import MyPage from './components/user/myPage';
 import ContentPage from './components/main/contentPage';
 import AdminMain from './components/main/adminMain';
+import Swal from 'sweetalert2';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -48,21 +49,32 @@ function App() {
       const res = await axios.get(process.env.REACT_APP_SERVER_URL + '/member/me');
       if (res.status === 200) {
         setIsLoggedIn(true);
-        setUserName(res.data); // 서버로부터 사용자 이름을 가져옴
+        setUserName(res.data.name); // 서버로부터 사용자 이름을 가져옴
       }
     } catch (error) {
       console.error(error);
+      Swal.fire({
+        title: "세션이 만료되었어요!",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500
+      }).then(async (res) => {
+        document.cookie = 'JSESSIONID=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        await handleLogout();
+        window.location.reload();
+      })
     }
   };
 
   useEffect(() => {
-    if (checkCookie('JSESSIONID') && !isAdminLoggedIn) {
+    if (checkCookie('JSESSIONID') && !isAdminLoggedIn && localStorage.getItem("user")) {
       checkLoginStatus();
     }
   }, []);
 
   const handleLogout = async (isSuccess) => {
     if(isSuccess) {
+      localStorage.clear();
       setIsLoggedIn(false);
       setIsAdminLoggedIn(false);
       setUserName('');

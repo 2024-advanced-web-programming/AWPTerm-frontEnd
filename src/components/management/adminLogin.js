@@ -24,6 +24,7 @@ const AdminLogin = ({onLogin}) => {
             console.log("success", res.data);
             
             if(res.status === 200) {
+              localStorage.setItem("user", {id: "admin"});
               onLogin("adminLoggedIn");
               navigate('/admin/main', { replace: true });
             }

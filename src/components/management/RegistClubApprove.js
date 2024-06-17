@@ -38,8 +38,13 @@ function RegistClubApprove() {
         rejectedReason: rejectedReason
       });
       console.log(res);
+
+      if(res.status === 200) {
+        return true;
+      }
     } catch (error) {
       console.error(error);
+      return false;
     }
   }
 
@@ -49,9 +54,11 @@ function RegistClubApprove() {
       // 승인 처리
       const updatedApplications = applications.map(app => {
         if (app.id === application.id) {
-          updateStatus(application, "승인", '')
+          const success = updateStatus(application, "승인", '')
           //TODO 아래의 status 변경이 통신에 성공했을 때만 적용되도록 수정
-          return { ...app, status: '승인' };
+          if(success) {
+            return { ...app, status: '승인' };
+          }
         } else {
           return app;
         }
@@ -68,9 +75,11 @@ function RegistClubApprove() {
   const handleReject = () => {
     const updatedApplications = applications.map(app => {
       if (app.id === selectedApplication.id) {
-        updateStatus(selectedApplication, "거절", rejectionReason)
+        const success = updateStatus(selectedApplication, "거절", rejectionReason)
         //TODO 아래의 status 변경이 통신에 성공했을 때만 적용되도록 수정
-        return { ...app, status: '거절', rejectionReason };
+        if(success) {
+          return { ...app, status: '거절', rejectionReason };
+        }
       } else {
         return app;
       }
