@@ -82,9 +82,9 @@ const ClubBasicInfo = ({ id }) => {
     formData.append("clubName", clubName);
     formData.append("introduction", introduction);
     formData.append("regularMeetingTime", regularMeetingTime);
-    formData.append("president", president);
-    formData.append("vicePresident", vicePresident);
-    formData.append("treasurer", treasurer);
+    formData.append("presidentId", president.id);
+    formData.append("vicePresidentId", vicePresident.id);
+    formData.append("secretaryId", treasurer.id);
     if (selectedApplicationFile) {
       formData.append("applicationForm", selectedApplicationFile);
     }
