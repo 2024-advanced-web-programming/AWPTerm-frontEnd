@@ -12,6 +12,7 @@ import {
   Checkbox,
 } from "@mui/material";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const ClubApplicationManagement = (id) => {
     const [membershipApplications, setMembershipApplications] = useState([
@@ -37,9 +38,36 @@ const ClubApplicationManagement = (id) => {
     fetchData();
   }, [])
 
-  const handleDownloadForm = (formUrl) => {
-    console.log("다운로드 URL:", formUrl);
-    // window.open(formUrl, "_blank");
+  const handleDownloadForm = async (name, fileId) => {
+    try {
+      const res = await axios.get(process.env.REACT_APP_SERVER_URL + `/file/download/${fileId}`, {
+        responseType: 'blob'
+      });
+      console.log(res);
+
+      if(res.status === 200) {
+        const fileBinary = res.data;
+        const blob = new Blob([fileBinary], { type: 'application/octet-stream' });
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${name}_가입신청서.txt`; // TODO : 파일 이름 변경
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire({
+        icon: "error",
+        title: "에러!",
+        html: `서버와의 통신에 문제가 생겼어요!<br>잠시 후, 다시 한 번 시도해주세요!`,
+        showConfirmButton: false,
+        timer: 1500
+      });
+    }
   };
 
   const handleBulkAction = (action) => {
@@ -117,7 +145,7 @@ const ClubApplicationManagement = (id) => {
                 <TableCell>{application.studentId}</TableCell>
                 <TableCell>{application.affiliation}</TableCell>
                 <TableCell>
-                  <Button variant="outlined" onClick={() => handleDownloadForm(application.formUrl)}>
+                  <Button variant="outlined" onClick={() => handleDownloadForm(application.name, application.applicationFormId)}>
                     가입신청서 다운로드
                   </Button>
                 </TableCell>
