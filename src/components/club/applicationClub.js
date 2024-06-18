@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useParams } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const Input = styled("input")({
   display: "none",
@@ -72,13 +73,40 @@ const ApplicationClub = () => {
     return <Typography variant="body1">로딩 중...</Typography>;
   }
 
+  const handleDownload = async () => {
+    try {
+      const res = await axios.get(process.env.REACT_APP_SERVER_URL + `/file/download/${clubs.fileId}`);
+      console.log(res);
+
+      if(res.status === 200) {
+        const fileUrl = res.data.fileUrl;
+        const link = document.createElement('a');
+
+        link.href = fileUrl;
+        link.setAttribute('download', `${res.data.uploadFileName}`); // 다운로드 파일명 설정
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire({
+        icon: "error",
+        title: "에러!",
+        html: `서버와의 통신에 문제가 생겼어요!<br>잠시 후, 다시 한 번 시도해주세요!`,
+        showConfirmButton: false,
+        timer: 1500
+      });
+    }
+  }
+
   return (
     <Container>
       <Typography variant="h4" gutterBottom>
         {clubs.name} 가입 신청
       </Typography>
 
-      <Button variant="contained" component="span" sx={{ marginBottom: '10px' }}>
+      <Button variant="contained" component="span" sx={{ marginBottom: '10px' }} onClick={handleDownload}>
         지원서 다운로드
       </Button>
 
@@ -113,7 +141,7 @@ const ApplicationClub = () => {
         <TextField
           label="학번"
           variant="outlined"
-          value={user.number}
+          value={user.code}
           fullWidth
           InputProps={{ readOnly: true }}
           margin="normal"
