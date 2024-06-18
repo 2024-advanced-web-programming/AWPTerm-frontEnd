@@ -43,7 +43,7 @@ const KakaoLoginHandler = ({ onLogin }) => {
         console.log(res);
   
         if (res.status === 200) {
-          localStorage.setItem("user", res.data);
+          localStorage.setItem("user", JSON.stringify(res.data));
           return res.data; // 서버로부터 사용자 이름을 가져옴
         }
       } catch (error) {

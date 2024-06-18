@@ -123,7 +123,22 @@ const ClubList = () => {
   const startIndex = (page - 1) * clubsPerPage;
   const displayedClubs = clubs.slice(startIndex, startIndex + clubsPerPage);
 
+  const isInClub = (clubMembers) => {
+    const me = localStorage.getItem("user");
+    console.log(me);
+
+    const isMember = clubMembers.some(member => member.id === me.id);
+
+    console.log(isMember);
+
+    return isMember;
+  }
+
   const handleCardClick = (club) => {
+    const showConfirm = !isInClub(club.members);
+
+    console.log(showConfirm);
+
     Swal.fire({
         imageUrl: `${club.representativePicture ? club.representativePicture : process.env.REACT_APP_NO_IMAGE}`,
         imageWidth: 400,
@@ -131,8 +146,9 @@ const ClubList = () => {
         imageAlt: "대표 사진",
         title: club.name,
         html: `${club.introduction ? club.introduction : '설명 없음'}<br>회장 : ${club.presidentName}<br>정기모임시간 :${club.regularMeetingTime ? club.regularMeetingTime : '없음'}`,
+        showConfirmButton: showConfirm,
         confirmButtonText: "가입 신청",
-        cancelButtonText: "취소",
+        cancelButtonText: showConfirm ? "취소" : "확인",
         showCancelButton: true,
       }).then((result) => {
         if(result.isConfirmed) {
