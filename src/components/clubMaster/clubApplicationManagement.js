@@ -16,11 +16,11 @@ import Swal from "sweetalert2";
 
 const ClubApplicationManagement = (id) => {
     const [membershipApplications, setMembershipApplications] = useState([
-        { id: 1, name: "홍길동", studentId: "20230001", affiliation: "컴퓨터공학과", formUrl: "/forms/1" },
-        { id: 2, name: "이순신", studentId: "20230002", affiliation: "전자공학과", formUrl: "/forms/2" },
-        { id: 3, name: "김유신", studentId: "20230003", affiliation: "경영학과", formUrl: "/forms/3" },
-        { id: 4, name: "윤봉길", studentId: "20230004", affiliation: "생명과학과", formUrl: "/forms/4" },
-        { id: 5, name: "강감찬", studentId: "20230005", affiliation: "심리학과", formUrl: "/forms/5" },
+        { applicantId: 1, applicantName: "홍길동", applicantCode: "20230001", applicantMajor: "컴퓨터공학과", applicationFormId: "/forms/1", applicationFormName: "가입신청서1" },
+        { applicantId: 2, applicantName: "이순신", applicantCode: "20230002", applicantMajor: "전자공학과", applicationFormId: "/forms/2", applicationFormName: "가입신청서2" },
+        { applicantId: 3, applicantName: "김유신", applicantCode: "20230003", applicantMajor: "경영학과", applicationFormId: "/forms/3", applicationFormName: "가입신청서3" },
+        { applicantId: 4, applicantName: "윤봉길", applicantCode: "20230004", applicantMajor: "생명과학과", applicationFormId: "/forms/4", applicationFormName: "가입신청서4" },
+        { applicantId: 5, applicantName: "강감찬", applicantCode: "20230005", applicantMajor: "심리학과", applicationFormId: "/forms/5", applicationFormName: "가입신청서5" },
         ]);
   const [selectedApplications, setSelectedApplications] = useState([]);
 
@@ -35,10 +35,10 @@ const ClubApplicationManagement = (id) => {
         }
     }
 
-    fetchData();
+    // fetchData();
   }, [])
 
-  const handleDownloadForm = async (name, fileId) => {
+  const handleDownloadForm = async (fileName, fileId) => {
     try {
       const res = await axios.get(process.env.REACT_APP_SERVER_URL + `/file/download/${fileId}`, {
         responseType: 'blob'
@@ -52,7 +52,7 @@ const ClubApplicationManagement = (id) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${name}_가입신청서.txt`; // TODO : 파일 이름 변경
+        a.download = `${fileName}`; // TODO : 파일 이름 변경
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -70,18 +70,80 @@ const ClubApplicationManagement = (id) => {
     }
   };
 
-  const handleBulkAction = (action) => {
-    if (action === "approve") {
-      console.log("다건 승인:", selectedApplications);
-    } else if (action === "reject") {
-      console.log("다건 거절:", selectedApplications);
+  const sendApplicationDecision = async (action, memberId) => {
+    const data = {
+      clubId : id,
+      memberId: memberId,
+      isApproval: action
     }
-    setSelectedApplications([]);
+    try {
+      const res = await axios.post(process.env.REACT_APP_SERVER_URL + "/club/application/decision", data);
+
+      if(res.status === 200) {
+        // Swal.fire({
+        //   icon: "success",
+        //   title: "처리 완료",
+        //   html: `정상적으로 가입 신청을 처리했어요!`,
+        //   showConfirmButton: false,
+        //   timer: 1500
+        // }).then((res) => {
+        //   window.location.reload();
+        // });
+
+        return true;
+      }
+    } catch (error) {
+      console.error(error);
+      // Swal.fire({
+      //   icon: "error",
+      //   title: "에러!",
+      //   html: `서버와의 통신에 문제가 생겼어요!<br>잠시 후, 다시 한 번 시도해주세요!`,
+      //   showConfirmButton: false,
+      //   timer: 1500
+      // });
+
+      return false;
+    }
+  } 
+
+  const handleBulkAction = async (action) => {
+    const isApproval = action === "approve";
+
+    try {
+      for (const memberId of selectedApplications) {
+        const res = await sendApplicationDecision(isApproval, memberId);
+        if(res === false) {
+          throw new Error('에러 발생!');
+        }
+      }
+      Swal.fire({
+        icon: "success",
+        title: "처리 완료",
+        html: `정상적으로 가입 신청을 ${isApproval ? "승인" : "거절"}했어요!`,
+        showConfirmButton: false,
+        timer: 1500,
+      }).then(() => {
+        setSelectedApplications([]);
+        window.location.reload();
+      });
+    } catch (error) {
+      console.error(error);
+      Swal.fire({
+        icon: "error",
+        title: "에러!",
+        html: `가입 신청을 처리하던 도중, 에러가 생겼어요.<br>아직 처리하지 못한 항목을 한번 더 확인해주세요.`,
+        showConfirmButton: false,
+        timer: 2000,
+      }).then(() => {
+        setSelectedApplications([]);
+        window.location.reload();
+      });
+    }
   };
 
   const handleSelectAll = (event) => {
     if (event.target.checked) {
-      const allIds = membershipApplications.map((app) => app.id);
+      const allIds = membershipApplications.map((app) => app.applicantId);
       setSelectedApplications(allIds);
     } else {
       setSelectedApplications([]);
@@ -129,23 +191,23 @@ const ClubApplicationManagement = (id) => {
               <TableCell>이름</TableCell>
               <TableCell>학번</TableCell>
               <TableCell>소속</TableCell>
-              <TableCell>동작</TableCell>
+              <TableCell>비고</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {membershipApplications.map((application) => (
-              <TableRow key={application.id}>
+              <TableRow key={application.applicantId}>
                 <TableCell>
                   <Checkbox
-                    checked={selectedApplications.includes(application.id)}
-                    onChange={() => handleSelectApplication(application.id)}
+                    checked={selectedApplications.includes(application.applicantId)}
+                    onChange={() => handleSelectApplication(application.applicantId)}
                   />
                 </TableCell>
-                <TableCell>{application.name}</TableCell>
-                <TableCell>{application.studentId}</TableCell>
-                <TableCell>{application.affiliation}</TableCell>
+                <TableCell>{application.applicantName}</TableCell>
+                <TableCell>{application.applicantCode}</TableCell>
+                <TableCell>{application.applicantMajor}</TableCell>
                 <TableCell>
-                  <Button variant="outlined" onClick={() => handleDownloadForm(application.name, application.applicationFormId)}>
+                  <Button variant="outlined" onClick={() => handleDownloadForm(application.applicationFormName, application.applicationFormId)}>
                     가입신청서 다운로드
                   </Button>
                 </TableCell>
