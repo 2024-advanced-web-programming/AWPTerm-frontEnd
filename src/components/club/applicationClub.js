@@ -75,18 +75,23 @@ const ApplicationClub = () => {
 
   const handleDownload = async () => {
     try {
-      const res = await axios.get(process.env.REACT_APP_SERVER_URL + `/file/download/${clubs.fileId}`);
+      const res = await axios.get(process.env.REACT_APP_SERVER_URL + `/file/download/${clubs.fileId}`, {
+        responseType: 'blob'
+      });
       console.log(res);
 
       if(res.status === 200) {
-        const fileUrl = res.data.fileUrl;
-        const link = document.createElement('a');
+        const fileBinary = res.data;
+        const blob = new Blob([fileBinary], { type: 'application/octet-stream' });
 
-        link.href = fileUrl;
-        link.setAttribute('download', `${res.data.uploadFileName}`); // 다운로드 파일명 설정
-        document.body.appendChild(link);
-        link.click();
-        link.remove();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${clubs.name}가입신청서.txt`; // TODO : 파일 이름 변경
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
       }
     } catch (error) {
       console.error(error);
