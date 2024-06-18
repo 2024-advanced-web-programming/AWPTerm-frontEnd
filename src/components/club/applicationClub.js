@@ -39,7 +39,6 @@ const ApplicationClub = () => {
 
         setClubs({id: 1, name: "테스트 동아리"});
         setUser({id: "aa", name: "김", major: "컴소공", number: "111"})
-
       }
     };
 
@@ -53,19 +52,21 @@ const ApplicationClub = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData();
-    formData.append("club", clubs.id); // clubs에서 선택된 동아리의 id 사용
+    formData.append("clubId", clubs.id); // clubs에서 선택된 동아리의 id 사용
+    formData.append("applicantName", user.name)
+    formData.append("applicantCode", user.code)
+    formData.append("applicantMajor", user.major)
     formData.append("file", file);
 
     try {
-      await axios.post("/api/apply", formData, {
+      await axios.post(`${process.env.REACT_APP_SERVER_URL}/club/application`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
       alert("신청이 성공적으로 제출되었습니다.");
     } catch (error) {
-      console.error("신청 제출 중 오류가 발생했습니다:", error);
-      alert("신청 제출에 실패했습니다.");
+      alert(error.response.data);
     }
   };
 
@@ -87,7 +88,7 @@ const ApplicationClub = () => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${clubs.name}가입신청서.txt`; // TODO : 파일 이름 변경
+        a.download = `${clubs.fileName}`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

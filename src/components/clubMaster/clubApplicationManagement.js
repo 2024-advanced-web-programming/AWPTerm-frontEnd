@@ -35,7 +35,7 @@ const ClubApplicationManagement = (id) => {
         }
     }
 
-    // fetchData();
+    fetchData();
   }, [])
 
   const handleDownloadForm = async (fileName, fileId) => {
@@ -72,36 +72,35 @@ const ClubApplicationManagement = (id) => {
 
   const sendApplicationDecision = async (action, memberId) => {
     const data = {
-      clubId : id,
+      clubId : id.id,
       memberId: memberId,
       isApproval: action
     }
+
     try {
       const res = await axios.post(process.env.REACT_APP_SERVER_URL + "/club/application/decision", data);
 
       if(res.status === 200) {
-        // Swal.fire({
-        //   icon: "success",
-        //   title: "처리 완료",
-        //   html: `정상적으로 가입 신청을 처리했어요!`,
-        //   showConfirmButton: false,
-        //   timer: 1500
-        // }).then((res) => {
-        //   window.location.reload();
-        // });
-
+        Swal.fire({
+          icon: "success",
+          title: "처리 완료",
+          html: `정상적으로 가입 신청을 처리했어요!`,
+          showConfirmButton: false,
+          timer: 1500
+        }).then((res) => {
+          window.location.reload();
+        });
         return true;
       }
     } catch (error) {
       console.error(error);
-      // Swal.fire({
-      //   icon: "error",
-      //   title: "에러!",
-      //   html: `서버와의 통신에 문제가 생겼어요!<br>잠시 후, 다시 한 번 시도해주세요!`,
-      //   showConfirmButton: false,
-      //   timer: 1500
-      // });
-
+      Swal.fire({
+        icon: "error",
+        title: "에러!",
+        html: `서버와의 통신에 문제가 생겼어요!<br>잠시 후, 다시 한 번 시도해주세요!`,
+        showConfirmButton: false,
+        timer: 1500
+      });
       return false;
     }
   } 
@@ -110,8 +109,8 @@ const ClubApplicationManagement = (id) => {
     const isApproval = action === "approve";
 
     try {
-      for (const memberId of selectedApplications) {
-        const res = await sendApplicationDecision(isApproval, memberId);
+      for (const applicantId of selectedApplications) {
+        const res = await sendApplicationDecision(isApproval, applicantId);
         if(res === false) {
           throw new Error('에러 발생!');
         }

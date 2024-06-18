@@ -53,15 +53,12 @@ const ClubMembers = ({ id }) => {
 
   const handleBulkRemove = async () => {
     try {
-      const res = axios.delete(process.env.REACT_APP_SERVER_URL + `/club/${id}/deletemembers/${selectedMembers.id}`)
-
-      // 탈퇴 처리 하는 통신 코드
-      console.log("Removing members:", selectedMembers);
+      const res = await axios.delete(process.env.REACT_APP_SERVER_URL + `/club/${id}/dismiss/${selectedMembers[0]}`)
       setMembers(members.filter((member) => !selectedMembers.includes(member.id)));
       setSelectedMembers([]);
       alert("선택된 부원이 탈퇴 처리되었습니다.");
     } catch (error) {
-      console.error("Error removing members:", error);
+      alert(error.response.data)
     }
   };
 

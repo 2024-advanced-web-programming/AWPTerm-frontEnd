@@ -66,7 +66,7 @@ const MyPage = () => {
         style={{ marginTop: "1rem" }}
         disabled={!selectedClub}
       >
-        선택한 동아리 수정하기
+        동아리 관리
       </Button>
       <Button
         variant="contained"
@@ -75,7 +75,7 @@ const MyPage = () => {
         style={{ marginTop: "1rem" }}
         disabled={!selectedClub}
       >
-        선택한 동아리에 게시글 작성하기
+        동아리에 게시글 작성
       </Button>
       </div>
     </Container>
