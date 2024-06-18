@@ -88,8 +88,9 @@ const Top = () => {
     console.log(selectedClub);
   };
 
-  const handlePostClick = (postId) => {
-    navigate(`/post/${postId}`);
+  const handlePostClick = (url) => {
+    // navigate(`/post/${postId}`);
+    window.open(url, '_blank');
   };
 
   return (
@@ -201,7 +202,7 @@ const Top = () => {
           <Grid container spacing={2}>
             {videos.slice(0, 3).map((video) => (
               <Grid item key={video.id} xs={12} sm={6} md={4}>
-                <Card onClick={() => handlePostClick(video.id)} style={{ cursor: "pointer" }}>
+                <Card onClick={() => handlePostClick(video.url)} style={{ cursor: "pointer" }}>
                   <CardMedia
                     component="img"
                     height="140"
