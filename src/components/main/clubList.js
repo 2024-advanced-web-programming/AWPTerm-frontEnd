@@ -160,13 +160,13 @@ const ClubList = () => {
               <CardMedia
                 component="img"
                 height="140"
-                image={club.thumbnailUrl} // 썸네일 이미지 URL
+                image={club.representativePicture} // 썸네일 이미지 URL
                 alt={club.name}
               />
               <CardContent>
                 <Typography variant="h5" gutterBottom>{club.name}</Typography>
-                <Typography variant="body1" gutterBottom>회장: {club.president}</Typography>
-                <Typography variant="body2" color="textSecondary" component="p">{club.description}</Typography>
+                <Typography variant="body1" gutterBottom>회장: {club.presidentName}</Typography>
+                <Typography variant="body2" color="textSecondary" component="p">{club.introduction}</Typography>
               </CardContent>
             </Card>
           </Grid>

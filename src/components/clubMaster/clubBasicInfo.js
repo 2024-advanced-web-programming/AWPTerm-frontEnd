@@ -15,9 +15,9 @@ const ClubBasicInfo = ({ id }) => {
   const [clubName, setClubName] = useState("넹면");
   const [introduction, setIntroduction] = useState("냉면 먹고싶은 동아리에요");
   const [regularMeetingTime, setRegularMeetingTime] = useState("매주 화요일 6시");
-  const [president, setPresident] = useState("");
-  const [vicePresident, setVicePresident] = useState("");
-  const [treasurer, setTreasurer] = useState("");
+  const [president, setPresident] = useState(null);
+  const [vicePresident, setVicePresident] = useState(null);
+  const [treasurer, setTreasurer] = useState(null);
   const [members, setMembers] = useState([
     { id: 1, name: "한성민", role: "회장", status: "승인" },
     { id: 2, name: "박찬진", role: "부회장", status: "승인" },
@@ -28,7 +28,6 @@ const ClubBasicInfo = ({ id }) => {
   ]);
   const [selectedApplicationFile, setSelectedApplicationFile] = useState(null); // 가입 신청서 파일
   const [selectedPhotoFile, setSelectedPhotoFile] = useState(null); // 대표 사진 파일
-
   const [isMembersSet, setIsMembersSet] = useState(false);
 
   const fetchData = async () => {
@@ -44,11 +43,11 @@ const ClubBasicInfo = ({ id }) => {
       console.error("동아리 정보를 가져오는 중 오류 발생:", error);
 
       const presidentMember = members.find((member) => member.role === "회장");
-      if (presidentMember) setPresident(presidentMember.name);
+      if (presidentMember) setPresident(presidentMember);
       const vicePresidentMember = members.find((member) => member.role === "부회장");
-      if (vicePresidentMember) setVicePresident(vicePresidentMember.name);
+      if (vicePresidentMember) setVicePresident(vicePresidentMember);
       const treasurerMember = members.find((member) => member.role === "총무");
-      if (treasurerMember) setTreasurer(treasurerMember.name);
+      if (treasurerMember) setTreasurer(treasurerMember);
     }
   };
 
@@ -65,11 +64,11 @@ const ClubBasicInfo = ({ id }) => {
       console.log(members);
       // 회장, 부회장, 총무 기본 값 설정
       const presidentMember = members.find((member) => member.role === "회장");
-      if (presidentMember) setPresident(presidentMember.name);
+      if (presidentMember) setPresident(presidentMember);
       const vicePresidentMember = members.find((member) => member.role === "부회장");
-      if (vicePresidentMember) setVicePresident(vicePresidentMember.name);
+      if (vicePresidentMember) setVicePresident(vicePresidentMember);
       const treasurerMember = members.find((member) => member.role === "총무");
-      if (treasurerMember) setTreasurer(treasurerMember.name);
+      if (treasurerMember) setTreasurer(treasurerMember);
     }
   }, [isMembersSet, members]);
 
@@ -96,8 +95,8 @@ const ClubBasicInfo = ({ id }) => {
     formData.append("introduction", introduction);
     formData.append("regularMeetingTime", regularMeetingTime);
     formData.append("presidentId", president.id);
-    formData.append("vicePresidentId", vicePresident.id ? vicePresident.id : null);
-    formData.append("secretaryId", treasurer.id ? treasurer.id : null);
+    formData.append("vicePresidentId", vicePresident ? vicePresident.id : null);
+    formData.append("secretaryId", treasurer ? treasurer.id : null);
     if (selectedApplicationFile) {
       formData.append("applicationForm", selectedApplicationFile);
     }
@@ -105,8 +104,8 @@ const ClubBasicInfo = ({ id }) => {
       formData.append("clubPhoto", selectedPhotoFile);
     }
 
-    console.log(treasurer.id ? treasurer.id : null);
-    console.log(vicePresident.id ? vicePresident.id : null);
+    console.log(introduction)
+    console.log(regularMeetingTime)
 
     try {
       const response = await axios.put(`${process.env.REACT_APP_SERVER_URL}/club/${id}`, formData, {
@@ -166,7 +165,7 @@ const ClubBasicInfo = ({ id }) => {
           <Select value={president} onChange={(e) => setPresident(e.target.value)} label="회장" required>
             {members
               .map((member) => (
-                <MenuItem key={member.id} value={member.name}>
+                <MenuItem key={member.id} value={member}>
                   {member.name}
                 </MenuItem>
               ))}
@@ -180,7 +179,7 @@ const ClubBasicInfo = ({ id }) => {
             </MenuItem>
             {members
               .map((member) => (
-                <MenuItem key={member.id} value={member.name}>
+                <MenuItem key={member.id} value={member}>
                   {member.name}
                 </MenuItem>
               ))}
@@ -194,7 +193,7 @@ const ClubBasicInfo = ({ id }) => {
             </MenuItem>
             {members
               .map((member) => (
-                <MenuItem key={member.id} value={member.name}>
+                <MenuItem key={member.id} value={member}>
                   {member.name}
                 </MenuItem>
               ))}
