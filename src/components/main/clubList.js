@@ -125,12 +125,12 @@ const ClubList = () => {
 
   const handleCardClick = (club) => {
     Swal.fire({
-        imageUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSn8494uQt4Z-P_WCixKVdDMnJmH4F2_p5ldQ&s",
+        imageUrl: `${club.representativePicture ? club.representativePicture : process.env.REACT_APP_NO_IMAGE}`,
         imageWidth: 400,
         imageHeight: 200,
         imageAlt: "대표 사진",
         title: club.name,
-        html: `${club.introduction}<br>회장 : ${club.presidentName}<br>정기모임시간 :${club.regularMeetingTime}`,
+        html: `${club.introduction ? club.introduction : '설명 없음'}<br>회장 : ${club.presidentName}<br>정기모임시간 :${club.regularMeetingTime ? club.regularMeetingTime : '없음'}`,
         confirmButtonText: "가입 신청",
         cancelButtonText: "취소",
         showCancelButton: true,
@@ -160,13 +160,13 @@ const ClubList = () => {
               <CardMedia
                 component="img"
                 height="140"
-                image={club.representativePicture} // 썸네일 이미지 URL
+                image={club.representativePicture ? club.representativePicture : process.env.REACT_APP_NO_IMAGE} // 썸네일 이미지 URL
                 alt={club.name}
               />
               <CardContent>
                 <Typography variant="h5" gutterBottom>{club.name}</Typography>
                 <Typography variant="body1" gutterBottom>회장: {club.presidentName}</Typography>
-                <Typography variant="body2" color="textSecondary" component="p">{club.introduction}</Typography>
+                <Typography variant="body2" color="textSecondary" component="p">{club.introduction ? club.introduction : '설명 없음'}</Typography>
               </CardContent>
             </Card>
           </Grid>
