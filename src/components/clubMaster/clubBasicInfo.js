@@ -29,36 +29,49 @@ const ClubBasicInfo = ({ id }) => {
   const [selectedApplicationFile, setSelectedApplicationFile] = useState(null); // 가입 신청서 파일
   const [selectedPhotoFile, setSelectedPhotoFile] = useState(null); // 대표 사진 파일
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await axios.get(`${process.env.REACT_APP_SERVER_URL}/club/${id}`);
-        console.log(res)
-        setClubName(res.data.name);
-        setIntroduction(res.data.introduction ? res.data.introduction : "");
-        setRegularMeetingTime(res.data.regularMeetingTime ? res.data.regularMeetingTime : "");
-        setMembers(res.data.members); // 멤버 목록 설정
-        // 회장, 부회장, 총무 기본 값 설정
-        const presidentMember = members.find((member) => member.role === "회장");
-        if (presidentMember) setPresident(presidentMember.name);
-        const vicePresidentMember = members.find((member) => member.role === "부회장");
-        if (vicePresidentMember) setVicePresident(vicePresidentMember.name);
-        const treasurerMember = members.find((member) => member.role === "총무");
-        if (treasurerMember) setTreasurer(treasurerMember.name);
-      } catch (error) {
-        console.error("동아리 정보를 가져오는 중 오류 발생:", error);
+  const [isMembersSet, setIsMembersSet] = useState(false);
 
-        const presidentMember = members.find((member) => member.role === "회장");
-        if (presidentMember) setPresident(presidentMember.name);
-        const vicePresidentMember = members.find((member) => member.role === "부회장");
-        if (vicePresidentMember) setVicePresident(vicePresidentMember.name);
-        const treasurerMember = members.find((member) => member.role === "총무");
-        if (treasurerMember) setTreasurer(treasurerMember.name);
-      }
+  const fetchData = async () => {
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_SERVER_URL}/club/${id}`);
+      console.log(res);
+      setMembers(res.data.members);
+      setClubName(res.data.name);
+      setIntroduction(res.data.introduction ? res.data.introduction : "");
+      setRegularMeetingTime(res.data.regularMeetingTime ? res.data.regularMeetingTime : "");
+      setIsMembersSet(true);
+    } catch (error) {
+      console.error("동아리 정보를 가져오는 중 오류 발생:", error);
+
+      const presidentMember = members.find((member) => member.role === "회장");
+      if (presidentMember) setPresident(presidentMember.name);
+      const vicePresidentMember = members.find((member) => member.role === "부회장");
+      if (vicePresidentMember) setVicePresident(vicePresidentMember.name);
+      const treasurerMember = members.find((member) => member.role === "총무");
+      if (treasurerMember) setTreasurer(treasurerMember.name);
+    }
+  };
+
+  useEffect(() => {
+    const setData = async () => {
+      await fetchData();
     };
 
-    fetchData();
+    setData();
   }, []);
+
+  useEffect(() => {
+    if (isMembersSet) {
+      console.log(members);
+      // 회장, 부회장, 총무 기본 값 설정
+      const presidentMember = members.find((member) => member.role === "회장");
+      if (presidentMember) setPresident(presidentMember.name);
+      const vicePresidentMember = members.find((member) => member.role === "부회장");
+      if (vicePresidentMember) setVicePresident(vicePresidentMember.name);
+      const treasurerMember = members.find((member) => member.role === "총무");
+      if (treasurerMember) setTreasurer(treasurerMember.name);
+    }
+  }, [isMembersSet, members]);
 
   const handleApplicationFileChange = (e) => {
     setSelectedApplicationFile(e.target.files[0]);
@@ -83,14 +96,17 @@ const ClubBasicInfo = ({ id }) => {
     formData.append("introduction", introduction);
     formData.append("regularMeetingTime", regularMeetingTime);
     formData.append("presidentId", president.id);
-    formData.append("vicePresidentId", vicePresident.id);
-    formData.append("secretaryId", treasurer.id);
+    formData.append("vicePresidentId", vicePresident.id ? vicePresident.id : null);
+    formData.append("secretaryId", treasurer.id ? treasurer.id : null);
     if (selectedApplicationFile) {
       formData.append("applicationForm", selectedApplicationFile);
     }
     if (selectedPhotoFile) {
       formData.append("clubPhoto", selectedPhotoFile);
     }
+
+    console.log(treasurer.id ? treasurer.id : null);
+    console.log(vicePresident.id ? vicePresident.id : null);
 
     try {
       const response = await axios.put(`${process.env.REACT_APP_SERVER_URL}/club/${id}`, formData, {
