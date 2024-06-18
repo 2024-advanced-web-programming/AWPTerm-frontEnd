@@ -12,7 +12,7 @@ import AdminLogin from './components/management/adminLogin';
 import ApplicationClub from './components/club/applicationClub';
 import Navbar from './components/nav/navBar';
 import axios from 'axios';
-import ApplicationStatus from './components/club/applicationStatus';
+import RegisteredClubs from './components/club/registeredClubs';
 import ClubApplicationManagement from './components/clubMaster/clubApplicationManagement';
 import ClubManagement from './components/clubMaster/clubManagement';
 import ClubPage from './components/club/clubPage';
@@ -113,13 +113,13 @@ function App() {
             <Route path="/management/registClub" element={<RegistClubApprove />} />
 
             <Route path="/club/list" element={<ClubList />} />
+            <Route path="/club/registered/list" element={<RegisteredClubs />} />
             <Route path="/club/events" element={<ClubEvents />} />
             <Route path="/club/photos" element={<ClubPhotos />} />
             <Route path="/club/videos" element={<ClubVideos />} />
             <Route path="/club/recruit" element={<ClubRecruit />} />
 
             <Route path="/club/application/:id" element={<ApplicationClub />} />
-            <Route path="/club/application/status" element={<ApplicationStatus />} />
             {/* <Route path="/club/application/master" element={<ClubApplicationManagement />} /> */}
 
             <Route path="/club/config/:id" element={<ClubManagement />} />

@@ -29,8 +29,8 @@ const MyPage = () => {
     }, [])
     return(
         <Container maxWidth="lg" style={{ marginTop: "2rem" }}>
-        <Button variant="contained" color="primary" onClick={() => {navigate('/club/application/status')}} style={{ marginRight: "1rem" }}>
-            내 가입 신청
+        <Button variant="contained" color="primary" onClick={() => {navigate('/club/registered/list')}} style={{ marginRight: "1rem" }}>
+            가입된 동아리 목록
         </Button>
         <Button variant="contained" color="primary" onClick={() => {navigate('/club/regist/status')}}>
             내 동아리 등록 신청
