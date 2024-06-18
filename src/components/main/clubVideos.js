@@ -13,7 +13,7 @@ import {
 import { useNavigate } from "react-router-dom";
 
 const videos = [
-  { id: 1, title: "Video 1", youtubeId: "dQw4w9WgXcQ" },
+  { id: 1, title: "Video 1", youtubeId: "dQw4w9WgXcQ", url: "https://www.naver.com/" },
   { id: 2, title: "Video 2", youtubeId: "eVTXPUF4Oz4" },
   { id: 3, title: "Video 3", youtubeId: "9bZkp7q19f0" },
   { id: 4, title: "Video 4", youtubeId: "RgKAFK5djSk" },
@@ -41,8 +41,9 @@ const ClubVideos = () => {
   const indexOfFirstVideo = indexOfLastVideo - videosPerPage;
   const currentVideos = videos.slice(indexOfFirstVideo, indexOfLastVideo);
 
-  const handlePostClick = (postId) => {
-    navigate(`/post/${postId}`);
+  const handlePostClick = (url) => {
+    // navigate(`/post/${url}`);
+    window.open(url, '_blank');
   };
 
 
@@ -56,7 +57,7 @@ const ClubVideos = () => {
           <Grid container spacing={2}>
             {currentVideos.map((video) => (
               <Grid item key={video.id} xs={12} sm={6} md={4}>
-                <Card onClick={() => handlePostClick(video.id)} style={{ cursor: "pointer" }}>
+                <Card onClick={() => handlePostClick(video.url)} style={{ cursor: "pointer" }}>
                   <CardMedia
                     component="img"
                     height="140"
