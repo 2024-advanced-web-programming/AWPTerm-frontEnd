@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { AccountCircle, Schedule, Visibility } from "@mui/icons-material";
 import axios from "axios";
+import { formatDateString } from "../commons/converter";
 
 // 더미 데이터
 // 더미 데이터
@@ -17,7 +18,7 @@ const dummyPost = {
     clubName: "boss",
     title: "게시글 제목",
     writerName: "작성자1",
-    timeStamp: "2023-06-17T12:30:00",
+    timestamp: "2023-06-17 12:30:00",
     content: `
       <p>게시글 내용입니다. <strong>강조</strong>된 부분도 있습니다.</p>
       <p>HTML 형식으로 작성된 내용입니다.</p>
@@ -34,27 +35,28 @@ const ContentPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const fetchPost = () => {
+    try {
+      axios.get(process.env.REACT_APP_SERVER_URL + `/board/${id}`)
+        .then((res) => {
+          console.log(res);
+          setPost(res.data);
+        });
+      // setPost(dummyPost);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     // 실제 서버에서 데이터를 가져오는 대신 더미 데이터를 사용
-    const fetchPost = async () => {
-      try {
-        axios.get(process.env.REACT_APP_SERVER_URL + `/board/${id}`)
-          .then((res) => {
-            console.log(res);
-            setPost(res);
-          });
-        // setPost(dummyPost);
-      } catch (error) {
-        setError(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchPost();
+    // console.log(post.timestamp)
   }, [id]);
 
-  if (loading) {
+  if (loading || !post) {
     return (
       <Container sx={{marginTop: "30px"}}>
         <Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh">
@@ -88,7 +90,7 @@ const ContentPage = () => {
       <Box display="flex" alignItems="center" mb={2}>
         <Schedule sx={{ mr: '8px' }} />
         <Typography variant="subtitle2">
-          {new Date(post.timeStamp).toLocaleString()}
+          {formatDateString(post.timestamp)}
         </Typography>
       </Box>
       <Divider sx={{ mb: 2 }} />

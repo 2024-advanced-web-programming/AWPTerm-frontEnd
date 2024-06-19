@@ -77,7 +77,7 @@ const Register = () => {
   };
 
   return (
-    <Container maxWidth="xs">
+    <Container maxWidth="xs" sx={{mt: '30px'}}>
       <Typography variant="h4" align="center">
         회원가입
       </Typography>
@@ -153,7 +153,7 @@ const Register = () => {
               컴퓨터소프트웨어공학과
             </MenuItem>
             <MenuItem value="컴퓨터공학과">컴퓨터공학과</MenuItem>
-            <MenuItem value="인공지능공학과">능동지능공학과</MenuItem>
+            <MenuItem value="인공지능공학과">인공지능공학과</MenuItem>
           </Select>
         </FormControl>
         <TextField

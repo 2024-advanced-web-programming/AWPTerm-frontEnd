@@ -146,7 +146,7 @@ const ClubBasicInfo = ({ id }) => {
           "Content-Type": "multipart/form-data",
         },
       });
-      console.log("동아리 정보 업데이트 결과:", response.data);
+      console.log("동아리 정보 업데이트 결과:", response);
       Swal.fire({
         title: "수정 성공",
         text: "성공적으로 수정했어요!",
@@ -154,7 +154,7 @@ const ClubBasicInfo = ({ id }) => {
         showConfirmButton: false,
         timer: 1500
       }).then((res) => {
-        window.location.reload();
+        // window.location.reload();
       })
     } catch (error) {
       console.error("동아리 정보 업데이트 중 오류 발생:", error);

@@ -163,7 +163,7 @@ const RegistClub = () => {
 
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" sx={{mt: '30px'}}>
       <Typography variant="h4" align="center" gutterBottom>
         동아리 등록 신청
       </Typography>

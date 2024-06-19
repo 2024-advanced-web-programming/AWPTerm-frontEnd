@@ -35,7 +35,7 @@ const AdminLogin = ({onLogin}) => {
     }
 
     return(
-        <Container maxWidth="xs">
+        <Container maxWidth="xs" sx={{mt: '30px'}}>
       <Typography variant="h4" align="center">로그인</Typography>
       <form style={{ marginTop: '1rem', display: 'flex', flexDirection: 'column', gap: '1rem' }} onSubmit={handleSubmit}>
         <TextField

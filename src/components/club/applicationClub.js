@@ -151,7 +151,7 @@ const ApplicationClub = () => {
   }
 
   return (
-    <Container>
+    <Container sx={{mt: '30px'}}>
       <Typography variant="h4" gutterBottom>
         {clubs.name} 가입 신청
       </Typography>

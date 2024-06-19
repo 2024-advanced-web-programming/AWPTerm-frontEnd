@@ -190,7 +190,7 @@ const Top = () => {
                   <CardContent style={{ textAlign: 'center', paddingTop: '20px', paddingBottom: '15px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '5px' }}>
                       <Description sx={{ marginRight: '3px'}} />
-                      <Typography direction="row" alignItems="center">{photo.title}</Typography>
+                      <Typography direction="row" alignItems="center">[{photo.clubName}] {photo.title}</Typography>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '5px' }}>
                       <AccountCircle sx={{ marginRight: '3px'}} />
@@ -226,7 +226,7 @@ const Top = () => {
                   <CardContent style={{ textAlign: 'center', paddingTop: '20px', paddingBottom: '15px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '5px' }}>
                       <Description sx={{ marginRight: '3px'}} />
-                      <Typography direction="row" alignItems="center">{video.title}</Typography>
+                      <Typography direction="row" alignItems="center">[{video.clubName}] {video.title}</Typography>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '5px' }}>
                       <AccountCircle sx={{ marginRight: '3px'}} />

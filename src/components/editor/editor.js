@@ -139,7 +139,7 @@ const Editor = () => {
           setUrl("");
           setContent("");
 
-          // navigate("/");
+          navigate("/");
         });
       } else {
         throw new Error("게시글 등록에 실패했습니다.");
