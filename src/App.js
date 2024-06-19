@@ -43,12 +43,17 @@ function App() {
     return false;
   };
 
+  const setLoginStatus = () => {
+    setIsLoggedIn(true);
+  }
+
   const checkLoginStatus = async () => {
     console.log('check');
     try {
       const res = await axios.get(process.env.REACT_APP_SERVER_URL + '/member/me');
       if (res.status === 200) {
-        setIsLoggedIn(true);
+        // setIsLoggedIn(true);
+        setLoginStatus();
         setUserName(res.data.name); // 서버로부터 사용자 이름을 가져옴
       }
     } catch (error) {
@@ -61,6 +66,7 @@ function App() {
       }).then(async (res) => {
         document.cookie = 'JSESSIONID=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
         await handleLogout();
+        localStorage.clear();
         window.location.reload();
       })
     }
@@ -78,6 +84,7 @@ function App() {
       setIsLoggedIn(false);
       setIsAdminLoggedIn(false);
       setUserName('');
+      window.location.reload();
     }
   };
 

@@ -8,15 +8,16 @@ import {
   Divider,
 } from "@mui/material";
 import { AccountCircle, Schedule, Visibility } from "@mui/icons-material";
+import axios from "axios";
 
 // 더미 데이터
 // 더미 데이터
 const dummyPost = {
     id: 1,
+    clubName: "boss",
     title: "게시글 제목",
-    author: "작성자1",
-    date: "2023-06-17T12:30:00",
-    views: 150,
+    writerName: "작성자1",
+    timeStamp: "2023-06-17T12:30:00",
     content: `
       <p>게시글 내용입니다. <strong>강조</strong>된 부분도 있습니다.</p>
       <p>HTML 형식으로 작성된 내용입니다.</p>
@@ -37,7 +38,12 @@ const ContentPage = () => {
     // 실제 서버에서 데이터를 가져오는 대신 더미 데이터를 사용
     const fetchPost = async () => {
       try {
-        setPost(dummyPost);
+        axios.get(process.env.REACT_APP_SERVER_URL + `/board/${id}`)
+          .then((res) => {
+            console.log(res);
+            setPost(res);
+          });
+        // setPost(dummyPost);
       } catch (error) {
         setError(error);
       } finally {
@@ -71,24 +77,18 @@ const ContentPage = () => {
   return (
     <Container sx={{marginTop: "30px"}}>
       <Typography variant="h4" gutterBottom>
-        {post.title}
+        [{post.clubName}] {post.title}
       </Typography>
       <Box display="flex" alignItems="center" mb={2}>
-        <AccountCircle sx={{ mr: 1 }} />
-        <Typography variant="subtitle1" gutterBottom>
-          작성자: {post.author}
+        <AccountCircle sx={{ mr: '8px' }} />
+        <Typography variant="subtitle1">
+          {post.writerName}
         </Typography>
       </Box>
       <Box display="flex" alignItems="center" mb={2}>
-        <Schedule sx={{ mr: 1 }} />
-        <Typography variant="subtitle2" gutterBottom>
-          작성 시간: {new Date(post.date).toLocaleString()}
-        </Typography>
-      </Box>
-      <Box display="flex" alignItems="center" mb={2}>
-        <Visibility sx={{ mr: 1 }} />
-        <Typography variant="subtitle2" gutterBottom>
-          조회수: {post.views}
+        <Schedule sx={{ mr: '8px' }} />
+        <Typography variant="subtitle2">
+          {new Date(post.timeStamp).toLocaleString()}
         </Typography>
       </Box>
       <Divider sx={{ mb: 2 }} />

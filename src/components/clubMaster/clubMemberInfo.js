@@ -12,6 +12,7 @@ import {
   Paper,
 } from "@mui/material";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const ClubMembers = ({ id }) => {
   const [members, setMembers] = useState([]);
@@ -51,14 +52,45 @@ const ClubMembers = ({ id }) => {
     }
   };
 
-  const handleBulkRemove = async () => {
+  const removeMember = async (memberId) => {
     try {
-      const res = await axios.delete(process.env.REACT_APP_SERVER_URL + `/club/${id}/dismiss/${selectedMembers[0]}`)
-      setMembers(members.filter((member) => !selectedMembers.includes(member.id)));
-      setSelectedMembers([]);
-      alert("선택된 부원이 탈퇴 처리되었습니다.");
+      const res = await axios.delete(process.env.REACT_APP_SERVER_URL + `/club/${id}/dismiss/${memberId}`)
+
+      if(res.status === 200) {
+        return true;
+      }
     } catch (error) {
-      alert(error.response.data)
+      console.error(error);
+      return false;
+    }
+  }
+
+  const handleBulkRemove = async () => {
+    const results = await Promise.all(selectedMembers.map(memberId => removeMember(memberId)));
+
+    const allSuccess = results.every(result => result === true);
+
+    if (allSuccess) {
+      Swal.fire({
+        title: "탈퇴 처리 성공",
+        text: "성공적으로 작업했어요!",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500
+      }).then(() => {
+        setSelectedMembers([]);
+        window.location.reload();
+      });
+    } else {
+      Swal.fire({
+        title: "에러!",
+        icon: "error",
+        html: `탈퇴 처리를 진행하는 도중 에러가 발생했어요!<br>멤버 목록을 다시 한 번 확인해주세요!`,
+        showConfirmButton: false,
+        timer: 2000
+      }).then((res) => {
+        window.location.reload();
+      });
     }
   };
 

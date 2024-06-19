@@ -10,6 +10,8 @@ import {
   Box,
 } from "@mui/material";
 import axios from "axios";
+import Swal from "sweetalert2";
+import { checkFileSize } from "../commons/checkValidation";
 
 const ClubBasicInfo = ({ id }) => {
   const [clubName, setClubName] = useState("넹면");
@@ -73,17 +75,47 @@ const ClubBasicInfo = ({ id }) => {
   }, [isMembersSet, members]);
 
   const handleApplicationFileChange = (e) => {
-    setSelectedApplicationFile(e.target.files[0]);
+    const fileInput = e.target;
+    const file = fileInput.files[0];
+
+    if(!file) {
+      return;
+    }
+
+    if(!checkFileSize(file)) {
+      fileInput.value = "";
+      return;
+    }
+
+    setSelectedApplicationFile(file);
   };
 
   const handlePhotoFileChange = (e) => {
-    const file = e.target.files[0];
+    const fileInput = e.target;
+    const file = fileInput.files[0];
+
+    if(!file) {
+      return;
+    }
+
     // 이미지 파일인지 확인
     if (file && file.type.startsWith("image")) {
+      if(!checkFileSize(file)) {
+        fileInput.value = "";
+        setSelectedPhotoFile(null);
+        return;
+      }
+
       setSelectedPhotoFile(file);
     } else {
+      fileInput.value = "";
       setSelectedPhotoFile(null);
-      alert("이미지 파일만 선택 가능합니다.");
+      Swal.fire({
+        title: "이미지 파일만 선택할 수 있어요!",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500
+      });
     }
   };
 
@@ -106,6 +138,7 @@ const ClubBasicInfo = ({ id }) => {
 
     console.log(introduction)
     console.log(regularMeetingTime)
+    console.log(selectedPhotoFile)
 
     try {
       const response = await axios.put(`${process.env.REACT_APP_SERVER_URL}/club/${id}`, formData, {
@@ -114,10 +147,23 @@ const ClubBasicInfo = ({ id }) => {
         },
       });
       console.log("동아리 정보 업데이트 결과:", response.data);
-      alert("동아리 기본 정보가 성공적으로 업데이트되었습니다.");
+      Swal.fire({
+        title: "수정 성공",
+        text: "성공적으로 수정했어요!",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500
+      }).then((res) => {
+        window.location.reload();
+      })
     } catch (error) {
       console.error("동아리 정보 업데이트 중 오류 발생:", error);
-      alert("동아리 기본 정보 업데이트 중 오류가 발생했습니다.");
+      Swal.fire({
+        title: "서버와의 통신에 문제가 생겼어요!",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500
+      });
     }
   };
 

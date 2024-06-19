@@ -12,8 +12,9 @@ import {
   TextField,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
+import { checkFileSize } from "../commons/checkValidation";
 
 const Input = styled("input")({
   display: "none",
@@ -24,6 +25,7 @@ const ApplicationClub = () => {
   const [clubs, setClubs] = useState({});
   const [file, setFile] = useState(null);
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // 백엔드 API에서 동아리 정보와 사용자 정보를 가져옴
@@ -46,11 +48,36 @@ const ApplicationClub = () => {
   }, [id]);
 
   const handleFileChange = (event) => {
-    setFile(event.target.files[0]);
+    const file = event.target.files[0];
+
+    if(!file) {
+      return;
+    }
+
+    if(!checkFileSize(file)) {
+      return;
+    }
+
+    setFile(file);
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    console.log(file);
+
+    if(file === null) {
+      Swal.fire({
+        title: "에러!",
+        text: "가입 신청서는 필수에요!",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500
+      });
+
+      return;
+    }
+
     const formData = new FormData();
     formData.append("clubId", clubs.id); // clubs에서 선택된 동아리의 id 사용
     formData.append("applicantName", user.name)
@@ -64,9 +91,26 @@ const ApplicationClub = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      alert("신청이 성공적으로 제출되었습니다.");
+      // alert("신청이 성공적으로 제출되었습니다.");
+      Swal.fire({
+        title: "신청 성공",
+        text: "성공적으로 신청했어요!",
+        icon: "success",
+        showConfirmButton: false,
+        timer: 1500
+      }).then((res) => {
+        navigate("/club/list");
+      })
+
     } catch (error) {
-      alert(error.response.data);
+      // alert(error.response.data);
+      console.error(error);
+      Swal.fire({
+        title: "서버와의 통신에 문제가 생겼어요!",
+        icon: "error",
+        showConfirmButton: false,
+        timer: 1500
+      });
     }
   };
 
@@ -160,7 +204,7 @@ const ApplicationClub = () => {
               id="file-input"
               type="file"
               onChange={handleFileChange}
-              required
+              // required
             />
             <Button variant="contained" component="span">
               지원서 첨부

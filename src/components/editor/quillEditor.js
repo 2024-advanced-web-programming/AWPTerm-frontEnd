@@ -3,6 +3,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import { QuillDeltaToHtmlConverter } from 'quill-delta-to-html';
 import axios from 'axios';
+import { checkFileSize } from '../commons/checkValidation';
 
 // 툴바 버튼 및 포맷 정의
 const formats = [
@@ -58,11 +59,29 @@ const QuillEditor = forwardRef ((props, ref) => {
   // 파일 업로드를 위한 커스텀 훅 (예시로 구현)
   const uploadFileMutation = useMemo(() => ({
     mutateAsync: async (file) => {
-      // 실제 서버 요청 로직은 여기에 구현
-      try {
-        const res = await axios.post(process.env.REACT_APP_SERVER_URL + "/board/uploadfile", file);
-        console.log(res);
+      if(!file) {
+        console.log("file is null", file);
+        return;
+      }
 
+      if(!checkFileSize(file)) {
+        console.log("file size error", file);
+        return;
+      }
+
+      // FormData 객체 생성 및 파일 추가
+      const formData = new FormData();
+      formData.append('image', file);
+  
+      try {
+        const res = await axios.post(process.env.REACT_APP_SERVER_URL + "/board/fileUpload", formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+  
+        console.log(res);
+  
         return new Promise((resolve) => {
           setTimeout(() => {
             resolve({ displayUrl: res.data });
@@ -72,7 +91,9 @@ const QuillEditor = forwardRef ((props, ref) => {
         console.error(error);
         return new Promise((resolve) => {
           setTimeout(() => {
-            resolve({ displayUrl: 'https://rohit-chouhan.gallerycdn.vsassets.io/extensions/rohit-chouhan/sweetalert2-snippet/1.1.2/1625627316335/Microsoft.VisualStudio.Services.Icons.Default' });
+            resolve({
+              displayUrl: 'https://rohit-chouhan.gallerycdn.vsassets.io/extensions/rohit-chouhan/sweetalert2-snippet/1.1.2/1625627316335/Microsoft.VisualStudio.Services.Icons.Default'
+            });
           }, 1000);
         });
       }

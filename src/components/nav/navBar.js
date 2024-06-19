@@ -22,9 +22,9 @@ const Navbar = ({ isLoggedIn, userName, onLogout, isAdminLoggedIn }) => {
       const res = await axios.post(process.env.REACT_APP_SERVER_URL + '/member/logout', null);
       if (res.status === 200) {
         document.cookie = 'JSESSIONID=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        onLogout(true);
         // window.location.reload(); // 페이지 새로고침
         navigate("/");
+        onLogout(true);
       }
     } catch (error) {
       console.error(error);

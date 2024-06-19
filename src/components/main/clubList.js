@@ -124,8 +124,13 @@ const ClubList = () => {
   const displayedClubs = clubs.slice(startIndex, startIndex + clubsPerPage);
 
   const isInClub = (clubMembers) => {
-    const me = localStorage.getItem("user");
-    console.log(me);
+    const data = localStorage.getItem("user");
+    if(!data) {
+      return true;
+    }
+
+    const me = JSON.parse(data);
+    console.log(me.id);
 
     const isMember = clubMembers.some(member => member.id === me.id);
 
@@ -175,7 +180,7 @@ const ClubList = () => {
             <Card onClick={() => {handleCardClick(club)}}>
               <CardMedia
                 component="img"
-                height="140"
+                height="188"
                 image={club.representativePicture ? club.representativePicture : process.env.REACT_APP_NO_IMAGE} // 썸네일 이미지 URL
                 alt={club.name}
               />
